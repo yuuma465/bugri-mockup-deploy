@@ -439,8 +439,8 @@ img { display: block; max-width: 100%; }
   display: flex;
   align-items: center;
   justify-content: center;
-  width: 196px;
-  height: 60px;
+  width: 190px;
+  height: 58px;
   padding: 0;
   overflow: hidden;
   background: transparent;
@@ -457,8 +457,8 @@ img { display: block; max-width: 100%; }
 }
 @media (max-width: 640px) {
   .brand {
-    width: 160px;
-    height: 50px;
+    width: 154px;
+    height: 48px;
   }
 }
 
