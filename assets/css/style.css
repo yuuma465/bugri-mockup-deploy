@@ -64,9 +64,9 @@ body::before {
   pointer-events: none;
   background: linear-gradient(
     180deg,
-    rgba(6,7,15,.64) 0%,
-    rgba(6,7,15,.50) 42%,
-    rgba(6,7,15,.76) 100%
+    rgba(255,255,255,.84) 0%,
+    rgba(255,255,255,.72) 42%,
+    rgba(247,250,255,.90) 100%
   );
 }
 body > * { position: relative; z-index: 1; }
@@ -795,3 +795,178 @@ img { display: block; max-width: 100%; }
 
 /* register 用ボーナスチップを中央配置 */
 .au-bonus-row { text-align: center; margin: 4px 0 14px; }
+
+/* =====================================================================
+ * [E] 白ベース配色オーバーライド
+ * =================================================================== */
+:root {
+  --bg: #f8fbff;
+  --bg-grad-1: #ffffff;
+  --bg-grad-2: #edf6ff;
+  --panel: #ffffff;
+  --card: rgba(255,255,255,.92);
+  --card-2: rgba(244,248,255,.92);
+  --line: rgba(24,44,84,.12);
+  --line-2: rgba(34,160,255,.24);
+  --text: #11142a;
+  --text-sub: #4f5877;
+  --text-dim: #7c849e;
+  --glow-cyan: 0 0 18px rgba(34,227,255,.26);
+  --glow-gold: 0 0 18px rgba(255,204,51,.28);
+}
+
+.main {
+  background: rgba(255,255,255,.18);
+}
+
+.header {
+  background:
+    linear-gradient(90deg, rgba(255,255,255,.92), rgba(248,252,255,.86) 52%, rgba(255,255,255,.92)),
+    rgba(255,255,255,.86);
+  border-bottom-color: rgba(34,160,255,.18);
+  box-shadow: 0 8px 26px rgba(24,44,84,.10);
+}
+
+.banner,
+.oripa,
+.win,
+.detail-visual,
+.mini-card,
+.auth-card,
+.mp-profile,
+.mp-stat,
+.mp-card,
+.mp-hist-row,
+.pt-plan,
+.r10-cell {
+  background: var(--card);
+  border-color: var(--line);
+  box-shadow: 0 12px 34px rgba(24,44,84,.08);
+}
+
+.oripa:hover,
+.mp-card:hover,
+.pt-plan:hover {
+  box-shadow: 0 16px 38px rgba(34,160,255,.14), var(--glow-cyan);
+}
+
+.banner-tag {
+  color: #0a3154;
+  background: rgba(34,227,255,.13);
+  border: 1px solid rgba(34,160,255,.24);
+}
+
+.cat,
+.sort,
+.draw-multi button,
+.field input,
+.g-close,
+.g-skip,
+.mini-btn-10 {
+  color: var(--text);
+  background: rgba(255,255,255,.76);
+  border-color: var(--line);
+}
+
+.field input::placeholder {
+  color: var(--text-dim);
+}
+
+.cat:hover,
+.sort:hover,
+.draw-multi button:hover,
+.tab:hover,
+.g-skip:hover {
+  color: #0f79b8;
+  border-color: var(--line-2);
+}
+
+.cat.on,
+.sort.on,
+.tab.on {
+  color: #0a3154;
+  background: rgba(34,227,255,.14);
+  text-shadow: none;
+}
+
+.stock-pill {
+  color: var(--text);
+  background: rgba(255,255,255,.82);
+  border-color: var(--line-2);
+}
+
+.badge-soldout {
+  color: #6c728a;
+  background: rgba(255,255,255,.74);
+}
+
+.tag-soldout {
+  background: #e7eaf2;
+  color: #5f667d;
+}
+
+.gauge {
+  background: rgba(24,44,84,.10);
+}
+
+.footer,
+.bottom-nav {
+  background: rgba(255,255,255,.90);
+  border-color: var(--line);
+  box-shadow: 0 -10px 28px rgba(24,44,84,.08);
+}
+
+.bottom-nav a.on {
+  text-shadow: none;
+}
+
+.tabs {
+  border-color: var(--line);
+}
+
+.rank-badge {
+  background: rgba(255,255,255,.78);
+}
+
+.rank-badge.silver {
+  color: #7c849e;
+}
+
+.auth-card,
+.au-card {
+  box-shadow: 0 18px 42px rgba(24,44,84,.10), 0 0 32px rgba(34,227,255,.08);
+}
+
+.draw-btn:disabled,
+.draw-btn-10:disabled {
+  color: var(--text-dim);
+  background: #e7eaf2;
+  border-color: var(--line);
+}
+
+.odds th {
+  background: rgba(244,248,255,.90);
+}
+
+.pt-balance,
+.pt-plan.hot {
+  background: linear-gradient(160deg, rgba(255,246,199,.78), rgba(255,255,255,.94));
+}
+
+.gacha-ov {
+  background: radial-gradient(120% 120% at 50% 40%, #ffffff, #eff8ff 70%);
+}
+
+.gface {
+  box-shadow: 0 20px 60px rgba(24,44,84,.18);
+}
+
+.gback {
+  background: linear-gradient(150deg, #f8fbff, #dfefff);
+  border-color: rgba(34,160,255,.26);
+}
+
+.gback::after {
+  color: rgba(34,160,255,.35);
+  text-shadow: 0 0 30px rgba(34,227,255,.30);
+}
