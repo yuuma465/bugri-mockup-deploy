@@ -1,0 +1,92 @@
+<!DOCTYPE html><html lang="ja"><head>
+<meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>ポイント購入｜BUGRI（バグリ）</title>
+<link rel="icon" type="image/png" href="assets/img/bugri-logo.png">
+<link rel="stylesheet" href="assets/css/style.css">
+</head><body>
+  <header class="header">
+    <div class="header-inner">
+      <a href="index.html" class="brand"><img class="brand-logo" src="assets/img/bugri-wordmark.png" alt="BUGRI バグリ"></a>
+      <nav class="hnav">
+        <a href="index.html">ホーム</a>
+        <a href="mypage.html">マイページ</a>
+        <a href="point.html">ポイント</a>
+      </nav>
+      <div class="header-spacer"></div>
+      <span class="points-pill"><span class="pt-ico">◈</span><span id="hdr-points">12,800</span> pt</span>
+      <a href="login.html" class="btn-login">ログイン</a>
+      <a href="register.html" class="btn-signup">新規登録</a>
+    </div>
+  </header>
+
+  <main class="main">
+    <div class="wrap">
+      <div class="page-head"><h1 class="page-title">ポイント購入</h1></div>
+
+      <!-- 現在保有 -->
+      <section class="pt-balance">
+        <div class="pt-balance-label">現在の保有ポイント</div>
+        <div class="pt-balance-num"><span id="pt-balance">12,800</span><small>pt</small></div>
+      </section>
+
+      <!-- 購入プラン -->
+      <section class="pt-plans" id="pt-plans"></section>
+      <p class="pt-note">※ これはデザインモックアップです。実際の決済・ポイント付与は行われません。<br>表示価格は税込です。ボーナスポイントは付与即時反映されます（イメージ）。</p>
+    </div>
+  </main>
+
+  <footer class="footer"><div class="wrap">
+    <div class="footer-links"><a href="#">利用規約</a><a href="#">プライバシーポリシー</a><a href="#">特定商取引法に基づく表記</a><a href="#">FAQ</a><a href="#">お問い合わせ</a></div>
+    <p class="footer-copy">&copy; 2026 BUGRI（バグリ）｜バグってるほど、アツい。 — デザインモックアップ（ダミーデータ）</p>
+  </div></footer>
+
+  <nav class="bottom-nav">
+    <a href="index.html"><i>⌂</i><span>ホーム</span></a>
+    <a href="mypage.html"><i>◈</i><span>マイページ</span></a>
+    <a href="point.html" class="on"><i>＋</i><span>ポイント</span></a>
+    <a href="login.html"><i>⏻</i><span>ログイン</span></a>
+  </nav>
+
+  <script src="assets/js/data.js"></script>
+  <script>
+  (function () {
+    var fmt = function (n) { return Number(n).toLocaleString('ja-JP'); };
+
+    // 現在保有（data.js の USER_POINTS を使用、無ければ 12,800）
+    var pts = (typeof USER_POINTS !== 'undefined') ? USER_POINTS : 12800;
+    document.getElementById('pt-balance').textContent = fmt(pts);
+
+    // 購入プラン（高額ほどお得）
+    var PLANS = [
+      { amt: 500,   bonus: 0,   flag: null },
+      { amt: 1000,  bonus: 0,   flag: null },
+      { amt: 3000,  bonus: 100, flag: 'お得' },
+      { amt: 5000,  bonus: 300, flag: '人気' },
+      { amt: 10000, bonus: 800, flag: '最大還元' },
+    ];
+
+    document.getElementById('pt-plans').innerHTML = PLANS.map(function (p) {
+      var hot = p.bonus > 0;
+      var total = p.amt + p.bonus;
+      var bonusHtml = p.bonus > 0
+        ? '<span class="bonus-chip">＋' + fmt(p.bonus) + ' ボーナスpt</span>'
+        : '<span class="pt-nobonus">ボーナスなし</span>';
+      return '<div class="pt-plan' + (hot ? ' hot' : '') + '">' +
+        (p.flag ? '<span class="pt-plan-flag">' + p.flag + '</span>' : '') +
+        '<div class="pt-plan-amt">' + fmt(p.amt) + '<small>pt</small></div>' +
+        '<div class="pt-plan-bonus">' + bonusHtml + '</div>' +
+        '<div class="pt-plan-price">合計 <b>' + fmt(total) + ' pt</b> 付与</div>' +
+        '<button class="btn-primary-full" data-amt="' + p.amt + '" data-total="' + total + '">購入する</button>' +
+        '</div>';
+    }).join('');
+
+    // 購入ボタン（見た目のみ）
+    document.querySelectorAll('#pt-plans .btn-primary-full').forEach(function (b) {
+      b.addEventListener('click', function (e) {
+        e.preventDefault();
+        alert(fmt(b.getAttribute('data-total')) + ' pt を購入しました（デザインモックアップ）');
+      });
+    });
+  })();
+  </script>
+</body></html>

@@ -1,0 +1,56 @@
+<!DOCTYPE html><html lang="ja"><head>
+<meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>ログイン｜BUGRI（バグリ）</title>
+<link rel="icon" type="image/png" href="assets/img/bugri-logo.png">
+<link rel="stylesheet" href="assets/css/style.css">
+</head><body>
+<header class="header">
+  <div class="header-inner">
+    <a href="index.html" class="brand"><img class="brand-logo" src="assets/img/bugri-wordmark.png" alt="BUGRI バグリ"></a>
+    <nav class="hnav">
+      <a href="index.html">ホーム</a>
+      <a href="mypage.html">マイページ</a>
+      <a href="point.html">ポイント</a>
+    </nav>
+    <div class="header-spacer"></div>
+    <span class="points-pill"><span class="pt-ico">◈</span><span id="hdr-points">12,800</span> pt</span>
+    <a href="login.html" class="btn-login">ログイン</a>
+    <a href="register.html" class="btn-signup">新規登録</a>
+  </div>
+</header>
+
+<main class="main">
+  <div class="auth-wrap">
+    <form class="auth-card au-card" onsubmit="return false">
+      <span class="au-mark">◈</span>
+      <h1 class="auth-title">ログイン</h1>
+      <p class="auth-sub">BUGRI アカウントでログイン</p>
+
+      <div class="field">
+        <label for="login-email">メールアドレス</label>
+        <input id="login-email" type="email" placeholder="you@example.com" autocomplete="email">
+      </div>
+      <div class="field">
+        <label for="login-password">パスワード</label>
+        <input id="login-password" type="password" placeholder="••••••••" autocomplete="current-password">
+      </div>
+
+      <button class="btn-primary-full" type="submit">ログイン</button>
+
+      <p class="auth-alt">アカウントをお持ちでない方は <a href="register.html">新規登録</a></p>
+    </form>
+  </div>
+</main>
+
+<footer class="footer"><div class="wrap">
+  <div class="footer-links"><a href="#">利用規約</a><a href="#">プライバシーポリシー</a><a href="#">特定商取引法に基づく表記</a><a href="#">FAQ</a><a href="#">お問い合わせ</a></div>
+  <p class="footer-copy">&copy; 2026 BUGRI（バグリ）｜バグってるほど、アツい。 — デザインモックアップ（ダミーデータ）</p>
+</div></footer>
+
+<nav class="bottom-nav">
+  <a href="index.html"><i>⌂</i><span>ホーム</span></a>
+  <a href="mypage.html"><i>◈</i><span>マイページ</span></a>
+  <a href="point.html"><i>＋</i><span>ポイント</span></a>
+  <a href="login.html" class="on"><i>⏻</i><span>ログイン</span></a>
+</nav>
+</body></html>

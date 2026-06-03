@@ -1,0 +1,118 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>オリパ詳細｜BUGRI（バグリ）</title>
+  <link rel="icon" type="image/png" href="assets/img/bugri-logo.png" />
+  <link rel="stylesheet" href="assets/css/style.css" />
+</head>
+<body>
+  <header class="header">
+    <div class="header-inner">
+      <a href="index.html" class="brand"><img class="brand-logo" src="assets/img/bugri-wordmark.png" alt="BUGRI バグリ"></a>
+      <nav class="hnav">
+        <a href="index.html">ホーム</a>
+        <a href="mypage.html">マイページ</a>
+        <a href="point.html">ポイント</a>
+      </nav>
+      <div class="header-spacer"></div>
+      <span class="points-pill"><span class="pt-ico">◈</span><span id="hdr-points">0</span> pt</span>
+      <a href="login.html" class="btn-login">ログイン</a>
+      <a href="register.html" class="btn-signup">新規登録</a>
+    </div>
+  </header>
+
+  <main class="main">
+    <div class="wrap">
+      <div class="crumb"><a href="index.html">オリパ一覧</a> ／ <span id="crumb-name"></span></div>
+
+      <!-- 詳細：JSが #detail に描画 -->
+      <section class="detail" id="detail"></section>
+
+      <h3 class="odds-title">排出カード一覧</h3>
+      <div class="cards-grid" id="cards-grid"></div>
+
+      <div style="text-align:center; margin-top:34px;">
+        <a href="index.html" class="g-close" style="display:inline-block; padding:12px 24px; border-radius:12px;">オリパ一覧に戻る</a>
+      </div>
+    </div>
+  </main>
+
+  <footer class="footer">
+    <div class="wrap">
+      <div class="footer-links">
+        <a href="#">利用規約</a>
+        <a href="#">プライバシーポリシー</a>
+        <a href="#">特定商取引法に基づく表記</a>
+        <a href="#">FAQ</a>
+        <a href="#">お問い合わせ</a>
+      </div>
+      <p class="footer-copy">&copy; 2026 BUGRI（バグリ）｜バグってるほど、アツい。 — デザインモックアップ（ダミーデータ）</p>
+    </div>
+  </footer>
+
+  <nav class="bottom-nav">
+    <a href="index.html" class="on"><i>⌂</i><span>ホーム</span></a>
+    <a href="mypage.html"><i>◈</i><span>マイページ</span></a>
+    <a href="point.html"><i>＋</i><span>ポイント</span></a>
+    <a href="login.html"><i>⏻</i><span>ログイン</span></a>
+  </nav>
+
+  <!-- ===== ガチャ開封演出オーバーレイ ===== -->
+  <div class="gacha-ov" id="gacha-ov">
+    <canvas id="gacha-canvas"></canvas>
+    <div class="g-skip" id="g-skip">スキップ ▶▶</div>
+
+    <div class="gacha-stage">
+      <!-- 当たりオーラ・光柱 -->
+      <div class="aura" id="aura"></div>
+      <div class="beams" id="beams"></div>
+
+      <!-- (A) チャージ -->
+      <div class="charge" id="charge">
+        <div class="ring r1"></div>
+        <div class="ring r2"></div>
+        <div class="ring r3"></div>
+        <div class="orb"></div>
+        <div class="charge-text">CHARGING</div>
+      </div>
+
+      <!-- (D) カード -->
+      <div class="gcard-wrap" id="gcard-wrap">
+        <div class="gcard" id="gcard">
+          <div class="gface gback"></div>
+          <div class="gface gfront" id="gfront"></div>
+        </div>
+      </div>
+
+      <!-- (E10) 10連結果グリッド -->
+      <div class="r10-result" id="r10-result">
+        <div class="r10-head">10連結果</div>
+        <div class="r10-grid"></div>
+        <div class="r10-total">合計資産 <b id="r10-total-val">0 pt</b></div>
+        <div class="gactions">
+          <button class="g-again" id="g-again10">もう一度10連を引く</button>
+          <button class="g-close" id="g-close10">閉じる</button>
+        </div>
+      </div>
+
+      <!-- (E) 結果（カードに情報集約。ここは操作のみ） -->
+      <div class="gresult" id="gresult">
+        <div class="gresult-cap">獲得しました</div>
+        <div class="gactions">
+          <button class="g-again" id="g-again">もう一度引く</button>
+          <button class="g-close" id="g-close2">閉じる</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- 収束フラッシュ -->
+    <div class="flash" id="flash"></div>
+  </div>
+
+  <script src="assets/js/data.js"></script>
+  <script src="assets/js/app.js"></script>
+  <script>renderDetail();</script>
+</body>
+</html>
