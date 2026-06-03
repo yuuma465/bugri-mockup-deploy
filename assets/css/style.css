@@ -56,6 +56,11 @@ body {
   letter-spacing: .01em;
   -webkit-font-smoothing: antialiased;
 }
+@media (max-width: 760px) {
+  body {
+    background: #f8fbff url("../img/bugri-bg-sp.png") center top / cover scroll no-repeat;
+  }
+}
 body::before {
   content: "";
   position: fixed;
