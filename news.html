@@ -3,12 +3,11 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>BUGRI（バグリ）｜オンラインオリパ</title>
+  <title>速報｜BUGRI（バグリ）</title>
   <link rel="icon" type="image/png" href="assets/img/bugri-logo.png" />
   <link rel="stylesheet" href="assets/css/style.css" />
 </head>
 <body>
-  <!-- ヘッダー -->
   <header class="header">
     <div class="header-inner">
       <a href="index.html" class="brand"><img class="brand-logo" src="assets/img/bugri-wordmark.png" alt="BUGRI バグリ"></a>
@@ -26,33 +25,16 @@
   </header>
 
   <main class="main">
-    <div class="wrap">
-      <!-- ヒーローバナー -->
-      <section class="hero">
-        <button class="hero-btn hero-btn-prev" id="hero-prev" type="button" aria-label="前のバナー">‹</button>
-        <div class="hero-track" id="hero-track"></div>
-        <button class="hero-btn hero-btn-next" id="hero-next" type="button" aria-label="次のバナー">›</button>
-        <div class="hero-dots" id="hero-dots"></div>
+    <div class="wrap news-page">
+      <div class="page-head"><h1 class="page-title">速報</h1></div>
+      <div class="news-period">直近1ヶ月の数値</div>
+      <section class="news-stats" id="news-stats"></section>
+      <section class="news-guide">
+        <div class="news-guide-title">速報表示について</div>
+        <p>超高額当選・高額当選・高額発送の速報を表示しています。</p>
       </section>
-
-      <!-- カテゴリタブ -->
-      <nav class="cats" id="cats"></nav>
-
-      <!-- ソート -->
-      <div class="sec-head" id="oripa-list">
-        <h2 class="sec-title">オリパ一覧 <span class="sec-count" id="pack-count"></span></h2>
-        <div class="sort-select" id="sorts">
-          <button class="sort-trigger" id="sort-trigger" type="button" aria-haspopup="true" aria-expanded="false">
-            <span class="sort-icon">⇅</span>
-            <span id="sort-label">おすすめ順</span>
-          </button>
-          <div class="sort-menu" id="sort-menu" role="menu"></div>
-        </div>
-      </div>
-
-      <!-- グリッド -->
-      <section class="grid" id="grid"></section>
-
+      <nav class="news-tabs" id="news-tabs"></nav>
+      <section class="news-list" id="news-list"></section>
     </div>
   </main>
 
@@ -70,14 +52,14 @@
   </footer>
 
   <nav class="bottom-nav">
-    <a href="index.html#oripa-list" class="on" data-nav="list"><i class="nav-pack-icon" aria-hidden="true"></i><span>オリパ一覧</span></a>
-    <a href="news.html" data-nav="news"><i>!</i><span>速報</span></a>
+    <a href="index.html#oripa-list" data-nav="list"><i class="nav-pack-icon" aria-hidden="true"></i><span>オリパ一覧</span></a>
+    <a href="news.html" class="on" data-nav="news"><i>!</i><span>速報</span></a>
     <a href="mypage.html#history"><i class="nav-target-icon" aria-hidden="true"></i><span>当選履歴</span></a>
     <a href="mypage.html"><i>◈</i><span>マイページ</span></a>
   </nav>
 
   <script src="assets/js/data.js"></script>
   <script src="assets/js/app.js"></script>
-  <script>renderIndex();</script>
+  <script>renderNewsPage();</script>
 </body>
 </html>

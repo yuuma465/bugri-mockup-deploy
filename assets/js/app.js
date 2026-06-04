@@ -44,7 +44,6 @@ function renderIndex() {
   renderBanners();
   renderCats();
   renderGrid();
-  renderWinFeed();
   wireSorts();
   syncBottomNav();
   window.addEventListener('hashchange', syncBottomNav);
@@ -153,8 +152,8 @@ function wireSorts() {
 }
 
 function syncBottomNav() {
-  const isRankingRoute = new URLSearchParams(location.search).get('sort') === 'popular';
-  const key = isRankingRoute ? 'ranking' : (location.hash === '#news' ? 'news' : 'list');
+  const page = location.pathname.split('/').pop() || 'index.html';
+  const key = page === 'news.html' ? 'news' : 'list';
   $$('.bottom-nav a[data-nav]').forEach((a) => a.classList.toggle('on', a.dataset.nav === key));
 }
 
@@ -199,16 +198,79 @@ function renderGrid() {
   }).join('');
 }
 
-function renderWinFeed() {
-  $('#winfeed').innerHTML = WIN_FEED.map((w) => `
-    <div class="win">
-      <div class="win-ava">${w.avatar}</div>
-      <div class="win-main">
-        <div class="win-line1"><b>${w.user}</b> さんが <span class="rb ${RARITY[w.rarity].cls}">${w.rarity}</span> 当選！</div>
-        <div class="win-line2">${w.card}（${w.pack}）</div>
-      </div>
-      <div class="win-time">${w.time}</div>
+const NEWS_FILTERS = [
+  { id: 'all', label: 'すべて' },
+  { id: 'ultra', label: '超高額当選' },
+  { id: 'high', label: '高額当選' },
+  { id: 'ship', label: '高額発送' },
+];
+
+function newsKind(item) {
+  if (item.rarity === 'SSR') return 'ultra';
+  if (item.rarity === 'SR' || item.rarity === 'R') return 'high';
+  return 'ship';
+}
+
+function newsKindLabel(kind) {
+  return (NEWS_FILTERS.find((filter) => filter.id === kind) || {}).label || '';
+}
+
+function renderNewsStats() {
+  const stats = [
+    { label: '超高額当選', value: '2,071件', tone: 'ultra' },
+    { label: '高額当選', value: '96,047件', tone: 'high' },
+    { label: '高額発送', value: '1,284件', tone: 'ship' },
+  ];
+  $('#news-stats').innerHTML = stats.map((stat) => `
+    <div class="news-stat news-stat-${stat.tone}">
+      <div class="news-stat-icon"></div>
+      <div class="news-stat-label">${stat.label}</div>
+      <div class="news-stat-value">${stat.value}</div>
     </div>`).join('');
+}
+
+function renderNewsTabs(active = 'all') {
+  $('#news-tabs').innerHTML = NEWS_FILTERS.map((filter) =>
+    `<button type="button" class="${filter.id === active ? 'on' : ''}" data-filter="${filter.id}">${filter.label}</button>`
+  ).join('');
+  $$('#news-tabs button').forEach((button) => {
+    button.addEventListener('click', () => {
+      const next = button.dataset.filter;
+      renderNewsTabs(next);
+      renderNewsList(next);
+    });
+  });
+}
+
+function renderNewsList(filter = 'all') {
+  const rows = WIN_FEED.filter((item) => filter === 'all' || newsKind(item) === filter);
+  $('#news-list').innerHTML = rows.map((item) => {
+    const kind = newsKind(item);
+    const cls = RARITY[item.rarity].cls;
+    return `<article class="news-card news-card-${kind}">
+      <div class="news-card-head">
+        <span class="news-kind">${newsKindLabel(kind)}</span>
+        <span class="news-time">${item.time}</span>
+      </div>
+      <div class="news-card-body">
+        <div class="news-thumb"><span class="rb ${cls}">${item.rarity}</span></div>
+        <div class="news-avatar">${item.avatar}</div>
+        <div class="news-main">
+          <div class="news-user">${item.user}</div>
+          <div class="news-title"><span class="rb ${cls}">${item.rarity}</span>${item.card}</div>
+          <div class="news-pack">${item.pack}</div>
+        </div>
+      </div>
+    </article>`;
+  }).join('');
+}
+
+function renderNewsPage() {
+  setHeaderPoints();
+  renderNewsStats();
+  renderNewsTabs();
+  renderNewsList();
+  syncBottomNav();
 }
 
 /* ===================================================================
