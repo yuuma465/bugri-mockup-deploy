@@ -8,22 +8,18 @@ const fmt = (n) => n.toLocaleString('ja-JP');
 const $ = (s, el = document) => el.querySelector(s);
 const $$ = (s, el = document) => [...el.querySelectorAll(s)];
 
-const TAG_LABEL = { NEW: 'NEW', HOT: 'HOT', LIMITED: '限定' };
-
 function catLabel(id) { return (CATEGORIES.find((c) => c.id === id) || {}).label || id; }
 function setHeaderPoints() { const el = $('#hdr-points'); if (el) el.textContent = fmt(USER_POINTS); }
 
 /* パックのサムネHTML（画像が無い場合は白ベースのプレースホルダ） */
 function thumbHtml(pack, big = false) {
   const sold = pack.remainingStock === 0;
-  const tag = pack.tag
-    ? `<span class="tag tag-${pack.tag.toLowerCase()}">${TAG_LABEL[pack.tag] || pack.tag}</span>` : '';
   const soldBadge = sold ? '<div class="badge-soldout">SOLD OUT</div>' : '';
   const stockPill = !big
     ? `<span class="stock-pill">残 ${pack.remainingStock}/${pack.totalStock}</span>` : '';
   return `<div class="thumb">
     <div class="img-empty">NO IMAGE</div>
-    ${tag}${stockPill}${soldBadge}
+    ${stockPill}${soldBadge}
   </div>`;
 }
 
@@ -31,7 +27,8 @@ function thumbHtml(pack, big = false) {
  * 一覧ページ
  * =============================================================== */
 let curCat = 'all';
-let curSort = 'new';
+let curSort = new URLSearchParams(location.search).get('sort') || 'new';
+if (!['new', 'popular', 'cheap', 'expensive'].includes(curSort)) curSort = 'new';
 
 function renderIndex() {
   setHeaderPoints();
@@ -40,6 +37,8 @@ function renderIndex() {
   renderGrid();
   renderWinFeed();
   wireSorts();
+  syncBottomNav();
+  window.addEventListener('hashchange', syncBottomNav);
 }
 
 function renderBanners() {
@@ -47,16 +46,24 @@ function renderBanners() {
   const dots = $('#hero-dots');
   track.innerHTML = BANNERS.map((b) => `
     <div class="banner t-${b.theme}">
-      <span class="banner-tag">${b.tag}</span>
       <div class="banner-title">${b.title}</div>
       <div class="banner-sub">${b.sub}</div>
     </div>`).join('');
   dots.innerHTML = BANNERS.map((_, i) => `<i class="${i === 0 ? 'on' : ''}"></i>`).join('');
-  // ドットをスクロール位置に同期
-  track.addEventListener('scroll', () => {
+  const slides = $$('.banner', track);
+  let activeIdx = 0;
+  const setActiveDot = () => {
     const idx = Math.round(track.scrollLeft / (track.scrollWidth / BANNERS.length));
-    $$('i', dots).forEach((d, i) => d.classList.toggle('on', i === Math.min(idx, BANNERS.length - 1)));
-  });
+    activeIdx = Math.min(Math.max(idx, 0), BANNERS.length - 1);
+    $$('i', dots).forEach((d, i) => d.classList.toggle('on', i === activeIdx));
+  };
+  track.addEventListener('scroll', setActiveDot);
+  if (slides.length > 1) {
+    setInterval(() => {
+      activeIdx = (activeIdx + 1) % slides.length;
+      slides[activeIdx].scrollIntoView({ behavior: 'smooth', block: 'nearest', inline: 'center' });
+    }, 3000);
+  }
 }
 
 function renderCats() {
@@ -69,11 +76,18 @@ function renderCats() {
 }
 
 function wireSorts() {
+  $$('#sorts .sort').forEach((x) => x.classList.toggle('on', x.dataset.sort === curSort));
   $$('#sorts .sort').forEach((s) => s.addEventListener('click', () => {
     curSort = s.dataset.sort;
     $$('#sorts .sort').forEach((x) => x.classList.toggle('on', x === s));
     renderGrid();
+    syncBottomNav();
   }));
+}
+
+function syncBottomNav() {
+  const key = curSort === 'popular' ? 'ranking' : (location.hash === '#news' ? 'news' : 'list');
+  $$('.bottom-nav a[data-nav]').forEach((a) => a.classList.toggle('on', a.dataset.nav === key));
 }
 
 function sortedPacks() {

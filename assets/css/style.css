@@ -132,12 +132,6 @@ img { display: block; max-width: 100%; }
   border: 1px solid #e3e6ef; background: #ffffff;
   display: flex; flex-direction: column; justify-content: flex-end; padding: 22px;
 }
-.banner-tag {
-  align-self: flex-start;
-  font-size: 11px; font-weight: 800; letter-spacing: .12em;
-  padding: 4px 10px; border-radius: 6px; margin-bottom: 10px;
-  background: #06070f; color: #fff;
-}
 .banner-title { font-size: 26px; font-weight: 900; line-height: 1.2; color: #11142a; }
 .banner-sub { color: #5a5f82; margin-top: 6px; font-size: 14px; }
 .hero-dots { display: flex; gap: 7px; justify-content: center; margin-top: 12px; }
@@ -185,13 +179,7 @@ img { display: block; max-width: 100%; }
 .img-empty { position: absolute; inset: 0; display: flex; align-items: center; justify-content: center;
   color: #c2c7d6; font-size: 12px; font-weight: 700; letter-spacing: .2em; }
 
-/* タグ・在庫 */
-.tag { position: absolute; top: 10px; left: 10px; z-index: 2;
-  font-size: 11px; font-weight: 900; letter-spacing: .08em; padding: 4px 9px; border-radius: 6px; }
-.tag-new   { background: var(--cyan); color: #04101a; box-shadow: var(--glow-cyan); }
-.tag-hot   { background: #ff2d55; color: #fff; box-shadow: 0 0 18px rgba(255,45,85,.5); }
-.tag-limited { background: var(--gold); color: #1a1300; box-shadow: var(--glow-gold); }
-.tag-soldout { background: #3a3f55; color: #cfd3e8; }
+/* 在庫 */
 .badge-soldout { position: absolute; inset: 0; z-index: 3; display: grid; place-items: center;
   background: rgba(5,6,16,.55); font-size: 26px; font-weight: 900; letter-spacing: .1em;
   color: #cfd3e8; }
@@ -473,6 +461,60 @@ img { display: block; max-width: 100%; }
 .hnav a:hover { color: var(--cyan); }
 @media (max-width: 760px) { .hnav { display: none; } }
 
+@media (max-width: 640px) {
+  .header-inner {
+    padding: 0 12px;
+    gap: 8px;
+  }
+  .header-spacer {
+    flex: 1 1 auto;
+    min-width: 0;
+  }
+  .brand {
+    flex: 0 1 clamp(112px, 34vw, 136px);
+    width: clamp(112px, 34vw, 136px);
+    height: 42px;
+  }
+  .points-pill {
+    flex: 0 0 auto;
+    white-space: nowrap;
+    gap: 5px;
+    padding: 6px 9px;
+    font-size: 12px;
+  }
+  .btn-signup {
+    flex: 0 0 auto;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    min-width: 68px;
+    height: 38px;
+    padding: 0 12px;
+    font-size: 12px;
+    line-height: 1;
+    white-space: nowrap;
+  }
+}
+
+@media (max-width: 360px) {
+  .header-inner {
+    padding: 0 10px;
+    gap: 6px;
+  }
+  .brand {
+    flex-basis: 108px;
+    width: 108px;
+  }
+  .points-pill {
+    padding: 6px 8px;
+  }
+  .btn-signup {
+    min-width: 62px;
+    padding: 0 9px;
+    font-size: 11px;
+  }
+}
+
 /* --- 下部ナビ（モバイル） --- */
 .bottom-nav {
   position: fixed; left: 0; right: 0; bottom: 0; z-index: 60;
@@ -481,9 +523,10 @@ img { display: block; max-width: 100%; }
   border-top: 1px solid var(--line);
   padding: 8px 0 calc(8px + env(safe-area-inset-bottom));
 }
-.bottom-nav a { display: flex; flex-direction: column; align-items: center; gap: 3px;
+.bottom-nav a { display: flex; flex: 1 1 0; min-width: 0; flex-direction: column; align-items: center; gap: 3px;
   font-size: 10px; font-weight: 700; color: var(--text-sub); }
 .bottom-nav a i { font-size: 18px; font-style: normal; line-height: 1; }
+.bottom-nav a span { max-width: 100%; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
 .bottom-nav a.on { color: var(--cyan); text-shadow: var(--glow-cyan); }
 @media (max-width: 760px) {
   .bottom-nav { display: flex; }
@@ -563,7 +606,8 @@ img { display: block; max-width: 100%; }
 /* --- 一覧カード：oripa を div 化、内側リンク --- */
 .oripa-link { display: block; }
 .draw-row-mini { display: flex; gap: 8px; padding: 0 14px 14px; }
-.mini-btn { flex: 1; text-align: center; padding: 9px 0; border-radius: 9px;
+.mini-btn { flex: 1; display: inline-flex; align-items: center; justify-content: center;
+  min-height: 38px; text-align: center; padding: 0; border-radius: 9px; line-height: 1;
   font-size: 13px; font-weight: 900; letter-spacing: .02em; transition: .15s;
   color: #04101a; background: linear-gradient(135deg, var(--gold), #ff9a3c);
   box-shadow: 0 0 14px rgba(255,204,51,.3); }
@@ -855,12 +899,6 @@ img { display: block; max-width: 100%; }
   box-shadow: 0 16px 38px rgba(34,160,255,.14), var(--glow-cyan);
 }
 
-.banner-tag {
-  color: #0a3154;
-  background: rgba(34,227,255,.13);
-  border: 1px solid rgba(34,160,255,.24);
-}
-
 .cat,
 .sort,
 .draw-multi button,
@@ -903,11 +941,6 @@ img { display: block; max-width: 100%; }
 .badge-soldout {
   color: #6c728a;
   background: rgba(255,255,255,.74);
-}
-
-.tag-soldout {
-  background: #e7eaf2;
-  color: #5f667d;
 }
 
 .gauge {

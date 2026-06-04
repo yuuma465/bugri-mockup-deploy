@@ -8,10 +8,6 @@ const CATEGORIES = [
   { id: 'all',       label: 'すべて' },
   { id: 'pokemon',   label: 'ポケモン' },
   { id: 'onepiece',  label: 'ワンピース' },
-  { id: 'yugioh',    label: '遊戯王' },
-  { id: 'dragonball',label: 'ドラゴンボール' },
-  { id: 'weiss',     label: 'ヴァイス' },
-  { id: 'mtg',       label: 'MTG' },
 ];
 
 /* レア度メタ（CSS のクラス名と対応） */
@@ -29,7 +25,6 @@ const ORIPA_PACKS = [
     name: 'ポケモン SSR確定 PREMIUM BOX',
     category: 'pokemon',
     price: 3000,
-    tag: 'NEW',
     theme: 'fire',
     totalStock: 100,
     remainingStock: 37,
@@ -48,7 +43,6 @@ const ORIPA_PACKS = [
     name: 'ワンピース 激アツ 1000pt',
     category: 'onepiece',
     price: 1000,
-    tag: 'HOT',
     theme: 'ocean',
     totalStock: 500,
     remainingStock: 412,
@@ -66,7 +60,6 @@ const ORIPA_PACKS = [
     name: '遊戯王 旧アジア レリーフ祭',
     category: 'yugioh',
     price: 5000,
-    tag: 'LIMITED',
     theme: 'gold',
     totalStock: 60,
     remainingStock: 8,
@@ -84,7 +77,6 @@ const ORIPA_PACKS = [
     name: 'ドラゴンボール スーパー 神龍オリパ',
     category: 'dragonball',
     price: 2000,
-    tag: null,
     theme: 'energy',
     totalStock: 200,
     remainingStock: 153,
@@ -102,7 +94,6 @@ const ORIPA_PACKS = [
     name: 'ポケモン お試し 300pt',
     category: 'pokemon',
     price: 300,
-    tag: 'NEW',
     theme: 'grass',
     totalStock: 1000,
     remainingStock: 880,
@@ -119,7 +110,6 @@ const ORIPA_PACKS = [
     name: 'ヴァイスシュヴァルツ サイン入りSP',
     category: 'weiss',
     price: 1500,
-    tag: 'HOT',
     theme: 'neon',
     totalStock: 150,
     remainingStock: 41,
@@ -136,7 +126,6 @@ const ORIPA_PACKS = [
     name: 'MTG 統率者 高額FOIL',
     category: 'mtg',
     price: 4000,
-    tag: 'LIMITED',
     theme: 'arcane',
     totalStock: 80,
     remainingStock: 24,
@@ -153,7 +142,6 @@ const ORIPA_PACKS = [
     name: 'ワンピース 第二弾 SOLD OUT記念',
     category: 'onepiece',
     price: 800,
-    tag: null,
     theme: 'ocean',
     totalStock: 300,
     remainingStock: 0,
@@ -170,7 +158,6 @@ const ORIPA_PACKS = [
     name: 'ポケモン 福袋オリパ 10000pt',
     category: 'pokemon',
     price: 10000,
-    tag: 'LIMITED',
     theme: 'gold',
     totalStock: 30,
     remainingStock: 5,
@@ -199,9 +186,9 @@ const WIN_FEED = [
 
 /* トップのヒーローバナー（カルーセル風） */
 const BANNERS = [
-  { theme: 'fire',   tag: 'PICK UP', title: 'リザードンEX 大量封入', sub: 'SSR確定 PREMIUM BOX 第3弾 開幕' },
-  { theme: 'arcane', tag: 'NEW',     title: 'MTG 高額FOILオリパ', sub: 'Reserved List 級が当たる' },
-  { theme: 'gold',   tag: 'LIMITED', title: '遊戯王 レリーフ祭', sub: '青眼の白龍 鑑定済み美品' },
+  { theme: 'fire',   title: 'リザードンEX 大量封入', sub: 'SSR確定 PREMIUM BOX 第3弾 開幕' },
+  { theme: 'arcane', title: 'MTG 高額FOILオリパ', sub: 'Reserved List 級が当たる' },
+  { theme: 'gold',   title: '遊戯王 レリーフ祭', sub: '青眼の白龍 鑑定済み美品' },
 ];
 
 /* ユーザーの保有ポイント（ヘッダー表示用ダミー） */

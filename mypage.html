@@ -8,9 +8,11 @@
     <div class="header-inner">
       <a href="index.html" class="brand"><img class="brand-logo" src="assets/img/bugri-wordmark.png" alt="BUGRI バグリ"></a>
       <nav class="hnav">
-        <a href="index.html">ホーム</a>
+        <a href="index.html#oripa-list">オリパ一覧</a>
+        <a href="index.html#news">速報</a>
+        <a href="index.html?sort=popular#oripa-list">ランキング</a>
+        <a href="mypage.html#history">当選履歴</a>
         <a href="mypage.html">マイページ</a>
-        <a href="point.html">ポイント</a>
       </nav>
       <div class="header-spacer"></div>
       <span class="points-pill"><span class="pt-ico">◈</span><span id="hdr-points">12,800</span> pt</span>
@@ -66,7 +68,7 @@
       <section class="mp-panel on" data-panel="coll">
         <div class="mp-coll" id="mp-coll"></div>
       </section>
-      <section class="mp-panel" data-panel="hist">
+      <section class="mp-panel" id="history" data-panel="hist">
         <div class="mp-hist" id="mp-hist"></div>
       </section>
     </div>
@@ -78,10 +80,11 @@
   </div></footer>
 
   <nav class="bottom-nav">
-    <a href="index.html"><i>⌂</i><span>ホーム</span></a>
-    <a href="mypage.html" class="on"><i>◈</i><span>マイページ</span></a>
-    <a href="point.html"><i>＋</i><span>ポイント</span></a>
-    <a href="login.html"><i>⏻</i><span>ログイン</span></a>
+    <a href="index.html#oripa-list"><i>▦</i><span>オリパ一覧</span></a>
+    <a href="index.html#news"><i>!</i><span>速報</span></a>
+    <a href="index.html?sort=popular#oripa-list"><i>♕</i><span>ランキング</span></a>
+    <a href="mypage.html#history" data-nav="history"><i>✓</i><span>当選履歴</span></a>
+    <a href="mypage.html" class="on" data-nav="mypage"><i>◈</i><span>マイページ</span></a>
   </nav>
 
   <script src="assets/js/data.js"></script>
@@ -138,16 +141,36 @@
     // タブ切替
     var tabs = document.querySelectorAll('#mp-tabs .tab');
     var panels = document.querySelectorAll('.mp-panel');
+    var bottomNavItems = document.querySelectorAll('.bottom-nav a');
+    var setTab = function (key) {
+      tabs.forEach(function (x) {
+        x.classList.toggle('on', x.getAttribute('data-tab') === key);
+      });
+      panels.forEach(function (p) {
+        p.classList.toggle('on', p.getAttribute('data-panel') === key);
+      });
+      bottomNavItems.forEach(function (nav) {
+        nav.classList.toggle('on',
+          (key === 'hist' && nav.getAttribute('data-nav') === 'history') ||
+          (key !== 'hist' && nav.getAttribute('data-nav') === 'mypage')
+        );
+      });
+    };
     tabs.forEach(function (t) {
       t.addEventListener('click', function () {
-        tabs.forEach(function (x) { x.classList.remove('on'); });
-        t.classList.add('on');
         var key = t.getAttribute('data-tab');
-        panels.forEach(function (p) {
-          p.classList.toggle('on', p.getAttribute('data-panel') === key);
-        });
+        setTab(key);
+        if (key === 'hist') {
+          history.replaceState(null, '', '#history');
+        } else {
+          history.replaceState(null, '', location.pathname);
+        }
       });
     });
+    window.addEventListener('hashchange', function () {
+      setTab(location.hash === '#history' ? 'hist' : 'coll');
+    });
+    setTab(location.hash === '#history' ? 'hist' : 'coll');
   })();
   </script>
 </body></html>
