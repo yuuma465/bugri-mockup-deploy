@@ -586,6 +586,46 @@ img { display: block; max-width: 100%; }
   font-size: 21px;
   transform: translateY(-1px);
 }
+.bottom-nav a i.nav-target-icon {
+  width: 22px;
+  height: 22px;
+  display: block;
+  position: relative;
+  box-sizing: border-box;
+  border-radius: 50%;
+  font-size: 0;
+  background:
+    radial-gradient(circle at 42% 58%,
+      currentColor 0 2px,
+      transparent 2px 4px,
+      currentColor 4px 5.5px,
+      transparent 5.5px 8px,
+      currentColor 8px 9.5px,
+      transparent 9.5px);
+}
+.nav-target-icon::before {
+  content: "";
+  position: absolute;
+  width: 13px;
+  height: 2px;
+  right: 0;
+  top: 5px;
+  background: currentColor;
+  border-radius: 999px;
+  transform: rotate(-35deg);
+  transform-origin: right center;
+}
+.nav-target-icon::after {
+  content: "";
+  position: absolute;
+  right: -1px;
+  top: 0;
+  width: 6px;
+  height: 6px;
+  border-top: 2px solid currentColor;
+  border-right: 2px solid currentColor;
+  transform: rotate(10deg);
+}
 .nav-pack-icon::before {
   content: "";
   position: absolute;
@@ -664,6 +704,20 @@ img { display: block; max-width: 100%; }
 .page-title { font-size: 24px; font-weight: 900; display: flex; align-items: center; gap: 10px; }
 .page-title::before { content: ""; width: 5px; height: 24px; border-radius: 3px;
   background: linear-gradient(var(--cyan), var(--purple)); box-shadow: var(--glow-cyan); }
+
+/* --- 汎用テキストページ --- */
+.text-page { max-width: 820px; margin: 0 auto; }
+.text-card {
+  margin-top: 18px;
+  padding: 24px;
+  border-radius: var(--radius);
+  background: var(--card);
+  border: 1px solid var(--line);
+  box-shadow: 0 12px 34px rgba(24,44,84,.08);
+}
+.text-section + .text-section { margin-top: 22px; padding-top: 22px; border-top: 1px solid var(--line); }
+.text-section h2 { font-size: 16px; font-weight: 900; color: var(--text); margin-bottom: 8px; }
+.text-section p { color: var(--text-sub); font-size: 14px; line-height: 1.8; }
 
 /* === [B] 10連・カードボタン === */
 
