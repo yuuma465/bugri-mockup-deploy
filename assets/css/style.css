@@ -587,44 +587,22 @@ img { display: block; max-width: 100%; }
   transform: translateY(-1px);
 }
 .bottom-nav a i.nav-target-icon {
-  width: 22px;
-  height: 22px;
+  width: 23px;
+  height: 23px;
   display: block;
-  position: relative;
   box-sizing: border-box;
-  border-radius: 50%;
   font-size: 0;
-  background:
-    radial-gradient(circle at 42% 58%,
-      currentColor 0 2px,
-      transparent 2px 4px,
-      currentColor 4px 5.5px,
-      transparent 5.5px 8px,
-      currentColor 8px 9.5px,
-      transparent 9.5px);
+  line-height: 0;
+  --nav-target-mask: url("data:image/svg+xml,%3Csvg%20xmlns='http://www.w3.org/2000/svg'%20viewBox='0%200%2064%2064'%3E%3Cg%20fill='none'%20stroke='black'%20stroke-width='5'%20stroke-linecap='round'%20stroke-linejoin='round'%3E%3Ccircle%20cx='25'%20cy='39'%20r='20'/%3E%3Ccircle%20cx='25'%20cy='39'%20r='13'/%3E%3Ccircle%20cx='25'%20cy='39'%20r='6'/%3E%3Cpath%20d='M25%2039L51%2013'/%3E%3C/g%3E%3Cpath%20fill='black'%20d='M44%2020V7l8%208%208-2-8%208%202%208-8-8z'/%3E%3C/svg%3E");
+  background: currentColor;
+  -webkit-mask: var(--nav-target-mask) center / contain no-repeat;
+  mask: var(--nav-target-mask) center / contain no-repeat;
 }
 .nav-target-icon::before {
-  content: "";
-  position: absolute;
-  width: 13px;
-  height: 2px;
-  right: 0;
-  top: 5px;
-  background: currentColor;
-  border-radius: 999px;
-  transform: rotate(-35deg);
-  transform-origin: right center;
+  content: none;
 }
 .nav-target-icon::after {
-  content: "";
-  position: absolute;
-  right: -1px;
-  top: 0;
-  width: 6px;
-  height: 6px;
-  border-top: 2px solid currentColor;
-  border-right: 2px solid currentColor;
-  transform: rotate(10deg);
+  content: none;
 }
 .nav-pack-icon::before {
   content: "";
