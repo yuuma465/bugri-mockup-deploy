@@ -304,26 +304,122 @@ img { display: block; max-width: 100%; }
   background: rgba(255,255,255,.04); border: 1px solid var(--line-2); }
 .draw-multi button:hover { border-color: var(--cyan); color: var(--cyan); }
 
-/* 確率テーブル */
-.odds-title { font-size: 15px; font-weight: 800; margin: 28px 0 12px; }
-.odds { width: 100%; border-collapse: collapse; border-radius: 12px; overflow: hidden;
-  border: 1px solid var(--line); }
-.odds th, .odds td { padding: 11px 14px; text-align: left; font-size: 14px; }
-.odds th { background: rgba(255,255,255,.04); color: var(--text-sub); font-weight: 700; }
-.odds tr + tr td { border-top: 1px solid var(--line); }
-.odds td:last-child { text-align: right; font-weight: 800; }
-
-/* 排出カード一覧 */
-.cards-grid { display: grid; grid-template-columns: repeat(5, 1fr); gap: 14px; margin-top: 16px; }
-.mini-card { border-radius: 12px; overflow: hidden; background: var(--card);
-  border: 1px solid var(--line); }
-.mini-face { aspect-ratio: 3 / 4; position: relative; display: grid; place-items: start;
-  background: #ffffff; padding: 8px; }
-.mini-face .rb { align-self: start; }
-.mini-body { padding: 9px 10px 11px; }
-.mini-name { font-size: 12px; font-weight: 800; line-height: 1.3; min-height: 31px;
-  display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden; }
-.mini-val { font-size: 13px; font-weight: 900; color: var(--gold); margin-top: 5px; }
+.prize-list {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 24px;
+  margin-top: 28px;
+}
+.prize-block {
+  width: min(100%, 340px);
+  display: grid;
+  justify-items: center;
+  gap: 14px;
+}
+.prize-label {
+  width: 100%;
+  min-height: 58px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 3px;
+  border: 4px solid rgba(0,0,0,.14);
+  border-radius: 8px;
+  color: #ffffff;
+  text-shadow:
+    2px 0 #111,
+    -2px 0 #111,
+    0 2px #111,
+    0 -2px #111,
+    0 3px 0 rgba(0,0,0,.22);
+  box-shadow: inset 0 0 18px rgba(255,255,255,.64), 0 10px 22px rgba(24,44,84,.10);
+}
+.prize-label b {
+  font-size: 42px;
+  font-weight: 900;
+  line-height: .9;
+}
+.prize-label span {
+  font-size: 20px;
+  font-weight: 900;
+}
+.prize-s .prize-label {
+  background:
+    linear-gradient(120deg, #1167ff 0%, #20e7ff 20%, #4eff72 42%, #fff847 58%, #ff7a18 74%, #dc005c 100%);
+}
+.prize-a .prize-label {
+  color: #ffffff;
+  background:
+    linear-gradient(105deg, #9d6d05 0%, #f7dc67 34%, #fffbe4 51%, #d7a50d 70%, #815708 100%);
+}
+.prize-b .prize-label {
+  background:
+    linear-gradient(105deg, #586172 0%, #d9e2ef 40%, #ffffff 54%, #8f9aab 76%, #3f4654 100%);
+}
+.prize-c .prize-label {
+  color: #ffffff;
+  background:
+    linear-gradient(105deg, #556070 0%, #aeb8c8 42%, #edf2f8 56%, #8792a4 76%, #454d5c 100%);
+}
+.prize-cards {
+  width: 100%;
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 12px;
+}
+.prize-card {
+  min-width: 0;
+  overflow: hidden;
+  border-radius: 12px;
+  background: var(--card);
+  border: 1px solid var(--line);
+  box-shadow: 0 16px 34px rgba(24,44,84,.12);
+}
+.prize-card-face {
+  aspect-ratio: 3 / 4;
+  display: flex;
+  align-items: flex-start;
+  justify-content: flex-start;
+  padding: 10px;
+  background:
+    radial-gradient(circle at 72% 22%, rgba(255,255,255,.86), transparent 0 10%, transparent 24%),
+    linear-gradient(135deg, rgba(255,211,80,.92), rgba(255,109,54,.78) 42%, rgba(80,45,120,.88));
+}
+.prize-a .prize-card-face {
+  background:
+    radial-gradient(circle at 70% 24%, rgba(255,255,255,.86), transparent 0 11%, transparent 24%),
+    linear-gradient(135deg, rgba(255,241,155,.96), rgba(214,158,28,.76) 42%, rgba(118,82,18,.82));
+}
+.prize-b .prize-card-face {
+  background:
+    radial-gradient(circle at 70% 24%, rgba(255,255,255,.86), transparent 0 11%, transparent 24%),
+    linear-gradient(135deg, rgba(235,244,255,.96), rgba(123,176,218,.72) 42%, rgba(61,88,132,.82));
+}
+.prize-c .prize-card-face {
+  background:
+    radial-gradient(circle at 70% 24%, rgba(255,255,255,.82), transparent 0 11%, transparent 24%),
+    linear-gradient(135deg, rgba(242,244,248,.96), rgba(170,179,195,.72) 42%, rgba(92,100,116,.78));
+}
+.prize-card-body {
+  padding: 11px 12px 13px;
+}
+.prize-card-name {
+  min-height: 34px;
+  font-size: 13px;
+  font-weight: 900;
+  line-height: 1.3;
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+}
+.prize-card-value {
+  margin-top: 7px;
+  font-size: 14px;
+  font-weight: 900;
+  color: var(--gold);
+}
 
 /* =====================================================================
  * 11. ガチャ開封演出（全画面オーバーレイ） — 主役
@@ -431,11 +527,9 @@ img { display: block; max-width: 100%; }
   .grid { grid-template-columns: repeat(3, 1fr); }
   .detail { grid-template-columns: 1fr; }
   .detail-visual { position: static; }
-  .cards-grid { grid-template-columns: repeat(4, 1fr); }
 }
 @media (max-width: 640px) {
   .grid { grid-template-columns: 1fr; gap: 14px; }
-  .cards-grid { grid-template-columns: repeat(3, 1fr); }
   .banner { flex-basis: 92%; height: 180px; }
   .banner-title { font-size: 20px; }
   .hero-btn { width: 34px; height: 34px; font-size: 23px; }
@@ -994,7 +1088,7 @@ img { display: block; max-width: 100%; }
 .oripa,
 .win,
 .detail-visual,
-.mini-card,
+.prize-card,
 .auth-card,
 .mp-profile,
 .mp-stat,
@@ -1098,10 +1192,6 @@ img { display: block; max-width: 100%; }
   color: var(--text-dim);
   background: #e7eaf2;
   border-color: var(--line);
-}
-
-.odds th {
-  background: rgba(244,248,255,.90);
 }
 
 .pt-balance,

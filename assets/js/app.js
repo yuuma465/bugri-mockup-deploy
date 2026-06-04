@@ -218,6 +218,41 @@ let DETAIL_PACK = null;
 
 function getParam(name) { return new URLSearchParams(location.search).get(name); }
 
+const PRIZE_GROUPS = [
+  { prize: 'S', tone: 's', rarity: 'SSR' },
+  { prize: 'A', tone: 'a', rarity: 'SR' },
+  { prize: 'B', tone: 'b', rarity: 'R' },
+  { prize: 'C', tone: 'c', rarity: 'N' },
+];
+
+function prizeCardHtml(card) {
+  const cls = RARITY[card.rarity].cls;
+  return `<div class="prize-card">
+    <div class="prize-card-face">
+      <span class="rb ${cls}">${card.rarity}</span>
+    </div>
+    <div class="prize-card-body">
+      <div class="prize-card-name">${card.name}</div>
+      <div class="prize-card-value">${fmt(card.value)} pt</div>
+    </div>
+  </div>`;
+}
+
+function prizeListHtml(cards) {
+  return `<div class="prize-list">
+    ${PRIZE_GROUPS.map((group) => {
+      const groupCards = cards
+        .filter((card) => card.rarity === group.rarity)
+        .sort((a, b) => b.value - a.value);
+      if (!groupCards.length) return '';
+      return `<section class="prize-block prize-${group.tone}">
+        <div class="prize-label"><b>${group.prize}</b><span>賞</span></div>
+        <div class="prize-cards">${groupCards.map(prizeCardHtml).join('')}</div>
+      </section>`;
+    }).join('')}
+  </div>`;
+}
+
 function renderDetail() {
   setHeaderPoints();
   const pack = findPack(getParam('id')) || ORIPA_PACKS[0];
@@ -225,7 +260,6 @@ function renderDetail() {
   $('#crumb-name').textContent = pack.name;
   document.title = `${pack.name}｜BUGRI（バグリ）`;
 
-  const odds = calcOdds(pack.cards);
   const pct = Math.round((pack.remainingStock / pack.totalStock) * 100);
   const low = pct <= 25;
   const sold = pack.remainingStock === 0;
@@ -249,26 +283,8 @@ function renderDetail() {
             <button class="draw-btn-10" id="draw-btn-10">10連を引く（${fmt(pack.price * 10)} pt）</button>
           </div>`}
 
-      <h3 class="odds-title">排出確率</h3>
-      <table class="odds"><thead><tr><th>レアリティ</th><th>確率</th></tr></thead><tbody>
-        ${['SSR', 'SR', 'R', 'N'].filter((r) => odds[r]).map((r) =>
-          `<tr><td><span class="rb ${RARITY[r].cls}">${r}</span></td><td>${odds[r]}%</td></tr>`).join('')}
-      </tbody></table>
+      ${prizeListHtml(pack.cards)}
     </div>`;
-
-  // 排出カード一覧
-  $('#cards-grid').innerHTML = [...pack.cards]
-    .sort((a, b) => b.value - a.value)
-    .map((c) => {
-      const cls = RARITY[c.rarity].cls;
-      return `<div class="mini-card">
-        <div class="mini-face"><span class="rb ${cls}">${c.rarity}</span></div>
-        <div class="mini-body">
-          <div class="mini-name">${c.name}</div>
-          <div class="mini-val">${fmt(c.value)} pt</div>
-        </div>
-      </div>`;
-    }).join('');
 
   if (!sold) {
     $('#draw-btn').addEventListener('click', startGacha);

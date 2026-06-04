@@ -194,18 +194,6 @@ const BANNERS = [
 /* ユーザーの保有ポイント（ヘッダー表示用ダミー） */
 const USER_POINTS = 12800;
 
-/* 排出確率を weight から算出 */
-function calcOdds(cards) {
-  const total = cards.reduce((s, c) => s + c.weight, 0);
-  const byRarity = {};
-  cards.forEach((c) => { byRarity[c.rarity] = (byRarity[c.rarity] || 0) + c.weight; });
-  const odds = {};
-  ['SSR', 'SR', 'R', 'N'].forEach((r) => {
-    if (byRarity[r]) odds[r] = +((byRarity[r] / total) * 100).toFixed(1);
-  });
-  return odds;
-}
-
 /* weight に基づく重み付き抽選（モックの見た目用。本番は外注の抽選エンジン） */
 function drawCard(cards) {
   const total = cards.reduce((s, c) => s + c.weight, 0);
