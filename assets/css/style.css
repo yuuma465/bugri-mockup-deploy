@@ -562,7 +562,16 @@ img { display: block; max-width: 100%; }
 }
 .bottom-nav a { display: flex; flex: 1 1 0; min-width: 0; flex-direction: column; align-items: center; gap: 3px;
   font-size: 10px; font-weight: 700; color: var(--text-sub); }
-.bottom-nav a i { font-size: 18px; font-style: normal; line-height: 1; }
+.bottom-nav a i {
+  width: 24px;
+  height: 22px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 18px;
+  font-style: normal;
+  line-height: 1;
+}
 .bottom-nav a i.nav-pack-icon {
   width: 17px;
   height: 22px;
@@ -594,11 +603,12 @@ img { display: block; max-width: 100%; }
   border: 2px solid currentColor;
   border-radius: 1px;
 }
-.bottom-nav a span { max-width: 100%; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.bottom-nav a span { max-width: 100%; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; line-height: 1.1; }
 .bottom-nav a.on { color: var(--cyan); text-shadow: var(--glow-cyan); }
 @media (max-width: 760px) {
   .bottom-nav { display: flex; }
   .main { padding-bottom: 86px; }
+  .footer { padding-bottom: calc(96px + env(safe-area-inset-bottom)); }
 }
 
 /* --- ランクバッジ --- */
