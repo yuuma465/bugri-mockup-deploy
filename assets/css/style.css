@@ -121,22 +121,35 @@ img { display: block; max-width: 100%; }
 .btn-login:hover, .btn-signup:hover { filter: brightness(1.1); }
 
 /* ---------- 4. ヒーローバナー（カルーセル） ---------- */
-.hero { margin: 22px 0 10px; }
-.hero-track { display: flex; gap: 16px; overflow-x: auto; scroll-snap-type: x mandatory;
-  padding-bottom: 8px; scrollbar-width: thin; }
-.hero-track::-webkit-scrollbar { height: 6px; }
-.hero-track::-webkit-scrollbar-thumb { background: var(--line-2); border-radius: 4px; }
+.hero { margin: 22px 0 10px; position: relative; }
+.hero-track { display: flex; gap: 16px; overflow: hidden; scroll-snap-type: x mandatory;
+  scroll-behavior: smooth; scrollbar-width: none; }
+.hero-track::-webkit-scrollbar { display: none; }
 .banner {
-  flex: 0 0 88%; max-width: 760px; scroll-snap-align: center;
+  flex: 0 0 100%; max-width: 100%; scroll-snap-align: center;
   height: 220px; border-radius: var(--radius); position: relative; overflow: hidden;
   border: 1px solid #e3e6ef; background: #ffffff;
   display: flex; flex-direction: column; justify-content: flex-end; padding: 22px;
 }
 .banner-title { font-size: 26px; font-weight: 900; line-height: 1.2; color: #11142a; }
 .banner-sub { color: #5a5f82; margin-top: 6px; font-size: 14px; }
+.hero-btn {
+  position: absolute; top: 50%; z-index: 4; transform: translateY(-50%);
+  width: 42px; height: 42px; border-radius: 999px; border: 1px solid var(--line);
+  display: grid; place-items: center; cursor: pointer;
+  color: var(--text); background: rgba(255,255,255,.86);
+  box-shadow: 0 10px 24px rgba(24,44,84,.12);
+  font-size: 28px; font-weight: 800; line-height: 1; transition: .15s;
+}
+.hero-btn:hover { color: #04101a; background: linear-gradient(135deg, var(--cyan), var(--blue)); }
+.hero-btn-prev { left: 12px; }
+.hero-btn-next { right: 12px; }
 .hero-dots { display: flex; gap: 7px; justify-content: center; margin-top: 12px; }
-.hero-dots i { width: 7px; height: 7px; border-radius: 999px; background: var(--line-2); display: block; }
-.hero-dots i.on { background: var(--cyan); box-shadow: var(--glow-cyan); width: 20px; }
+.hero-dots button {
+  width: 9px; height: 9px; border: 0; border-radius: 999px; padding: 0;
+  background: var(--line-2); cursor: pointer; display: block; transition: .15s;
+}
+.hero-dots button.on { background: var(--cyan); box-shadow: var(--glow-cyan); width: 24px; }
 
 /* ---------- 5. カテゴリタブ ---------- */
 .cats { display: flex; gap: 9px; overflow-x: auto; padding: 14px 0 6px; scrollbar-width: none; }
@@ -404,6 +417,9 @@ img { display: block; max-width: 100%; }
   .cards-grid { grid-template-columns: repeat(3, 1fr); }
   .banner { flex-basis: 92%; height: 180px; }
   .banner-title { font-size: 20px; }
+  .hero-btn { width: 34px; height: 34px; font-size: 23px; }
+  .hero-btn-prev { left: 8px; }
+  .hero-btn-next { right: 8px; }
   .logo { font-size: 18px; }
   .header-inner { gap: 10px; }
   .btn-login { display: none; }

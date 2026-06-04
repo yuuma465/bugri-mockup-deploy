@@ -44,24 +44,49 @@ function renderIndex() {
 function renderBanners() {
   const track = $('#hero-track');
   const dots = $('#hero-dots');
+  const prev = $('#hero-prev');
+  const next = $('#hero-next');
   track.innerHTML = BANNERS.map((b) => `
     <div class="banner t-${b.theme}">
       <div class="banner-title">${b.title}</div>
       <div class="banner-sub">${b.sub}</div>
     </div>`).join('');
-  dots.innerHTML = BANNERS.map((_, i) => `<i class="${i === 0 ? 'on' : ''}"></i>`).join('');
+  dots.innerHTML = BANNERS.map((_, i) =>
+    `<button type="button" class="${i === 0 ? 'on' : ''}" aria-label="バナー${i + 1}へ移動"></button>`
+  ).join('');
   const slides = $$('.banner', track);
   let activeIdx = 0;
-  const setActiveDot = () => {
-    const idx = Math.round(track.scrollLeft / (track.scrollWidth / BANNERS.length));
-    activeIdx = Math.min(Math.max(idx, 0), BANNERS.length - 1);
-    $$('i', dots).forEach((d, i) => d.classList.toggle('on', i === activeIdx));
+  let scrollTimer = 0;
+  const setActiveDot = (idx) => {
+    activeIdx = (idx + slides.length) % slides.length;
+    $$('button', dots).forEach((d, i) => d.classList.toggle('on', i === activeIdx));
   };
-  track.addEventListener('scroll', setActiveDot);
+  const goToSlide = (idx) => {
+    setActiveDot(idx);
+    const slide = slides[activeIdx];
+    const left = slide.offsetLeft - ((track.clientWidth - slide.clientWidth) / 2);
+    track.scrollTo({ left, behavior: 'smooth' });
+  };
+  track.addEventListener('scroll', () => {
+    clearTimeout(scrollTimer);
+    scrollTimer = setTimeout(() => {
+      const center = track.scrollLeft + (track.clientWidth / 2);
+      const nearest = slides.reduce((best, slide, i) => {
+        const slideCenter = slide.offsetLeft + (slide.clientWidth / 2);
+        const dist = Math.abs(center - slideCenter);
+        return dist < best.dist ? { idx: i, dist } : best;
+      }, { idx: activeIdx, dist: Infinity });
+      setActiveDot(nearest.idx);
+    }, 80);
+  });
+  if (prev && next) {
+    prev.addEventListener('click', () => goToSlide(activeIdx - 1));
+    next.addEventListener('click', () => goToSlide(activeIdx + 1));
+  }
+  $$('button', dots).forEach((button, i) => button.addEventListener('click', () => goToSlide(i)));
   if (slides.length > 1) {
     setInterval(() => {
-      activeIdx = (activeIdx + 1) % slides.length;
-      slides[activeIdx].scrollIntoView({ behavior: 'smooth', block: 'nearest', inline: 'center' });
+      goToSlide(activeIdx + 1);
     }, 3000);
   }
 }
