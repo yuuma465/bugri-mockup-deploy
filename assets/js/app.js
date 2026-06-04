@@ -27,8 +27,17 @@ function thumbHtml(pack, big = false) {
  * 一覧ページ
  * =============================================================== */
 let curCat = 'all';
-let curSort = new URLSearchParams(location.search).get('sort') || 'new';
-if (!['new', 'popular', 'cheap', 'expensive'].includes(curSort)) curSort = 'new';
+let curSort = new URLSearchParams(location.search).get('sort') || 'popular';
+const SORT_OPTIONS = [
+  { id: 'popular', label: 'おすすめ順' },
+  { id: 'expensive', label: 'ポイントが高い順' },
+  { id: 'cheap', label: 'ポイントが低い順' },
+  { id: 'new', label: '公開が新しい順' },
+  { id: 'old', label: '公開が古い順' },
+  { id: 'stockHigh', label: '残り割合が多い順' },
+  { id: 'stockLow', label: '残り割合が少ない順' },
+];
+if (!SORT_OPTIONS.some((option) => option.id === curSort)) curSort = 'popular';
 
 function renderIndex() {
   setHeaderPoints();
@@ -101,27 +110,65 @@ function renderCats() {
 }
 
 function wireSorts() {
-  $$('#sorts .sort').forEach((x) => x.classList.toggle('on', x.dataset.sort === curSort));
-  $$('#sorts .sort').forEach((s) => s.addEventListener('click', () => {
-    curSort = s.dataset.sort;
-    $$('#sorts .sort').forEach((x) => x.classList.toggle('on', x === s));
-    renderGrid();
-    syncBottomNav();
-  }));
+  const root = $('#sorts');
+  const trigger = $('#sort-trigger');
+  const label = $('#sort-label');
+  const menu = $('#sort-menu');
+  const setOpen = (open) => {
+    root.classList.toggle('is-open', open);
+    trigger.setAttribute('aria-expanded', String(open));
+  };
+  const syncSortUi = () => {
+    const current = SORT_OPTIONS.find((option) => option.id === curSort) || SORT_OPTIONS[0];
+    label.textContent = current.label;
+    $$('.sort-option', menu).forEach((button) => {
+      const isActive = button.dataset.sort === curSort;
+      button.classList.toggle('on', isActive);
+      button.setAttribute('aria-checked', String(isActive));
+    });
+  };
+
+  menu.innerHTML = SORT_OPTIONS.map((option) =>
+    `<button class="sort-option" type="button" role="menuitemradio" data-sort="${option.id}" aria-checked="false">
+      <span>${option.label}</span><span class="sort-check">✓</span>
+    </button>`
+  ).join('');
+  trigger.addEventListener('click', () => setOpen(!root.classList.contains('is-open')));
+  $$('.sort-option', menu).forEach((button) => {
+    button.addEventListener('click', () => {
+      curSort = button.dataset.sort;
+      syncSortUi();
+      setOpen(false);
+      renderGrid();
+      syncBottomNav();
+    });
+  });
+  document.addEventListener('click', (event) => {
+    if (!root.contains(event.target)) setOpen(false);
+  });
+  document.addEventListener('keydown', (event) => {
+    if (event.key === 'Escape') setOpen(false);
+  });
+  syncSortUi();
 }
 
 function syncBottomNav() {
-  const key = curSort === 'popular' ? 'ranking' : (location.hash === '#news' ? 'news' : 'list');
+  const isRankingRoute = new URLSearchParams(location.search).get('sort') === 'popular';
+  const key = isRankingRoute ? 'ranking' : (location.hash === '#news' ? 'news' : 'list');
   $$('.bottom-nav a[data-nav]').forEach((a) => a.classList.toggle('on', a.dataset.nav === key));
 }
 
 function sortedPacks() {
+  const order = new Map(ORIPA_PACKS.map((pack, index) => [pack.id, index]));
   let list = ORIPA_PACKS.filter((p) => curCat === 'all' || p.category === curCat);
   const by = {
-    new: (a, b) => 0,
+    new: (a, b) => order.get(a.id) - order.get(b.id),
+    old: (a, b) => order.get(b.id) - order.get(a.id),
     popular: (a, b) => (b.totalStock - b.remainingStock) - (a.totalStock - a.remainingStock),
     cheap: (a, b) => a.price - b.price,
     expensive: (a, b) => b.price - a.price,
+    stockHigh: (a, b) => (b.remainingStock / b.totalStock) - (a.remainingStock / a.totalStock),
+    stockLow: (a, b) => (a.remainingStock / a.totalStock) - (b.remainingStock / b.totalStock),
   }[curSort];
   return [...list].sort(by);
 }

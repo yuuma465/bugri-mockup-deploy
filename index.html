@@ -42,11 +42,12 @@
       <!-- ソート -->
       <div class="sec-head" id="oripa-list">
         <h2 class="sec-title">オリパ一覧 <span class="sec-count" id="pack-count"></span></h2>
-        <div class="sorts" id="sorts">
-          <span class="sort on" data-sort="new">新着</span>
-          <span class="sort" data-sort="popular">人気</span>
-          <span class="sort" data-sort="cheap">価格安い</span>
-          <span class="sort" data-sort="expensive">価格高い</span>
+        <div class="sort-select" id="sorts">
+          <button class="sort-trigger" id="sort-trigger" type="button" aria-haspopup="true" aria-expanded="false">
+            <span class="sort-icon">⇅</span>
+            <span id="sort-label">おすすめ順</span>
+          </button>
+          <div class="sort-menu" id="sort-menu" role="menu"></div>
         </div>
       </div>
 
@@ -75,7 +76,7 @@
   </footer>
 
   <nav class="bottom-nav">
-    <a href="index.html#oripa-list" class="on" data-nav="list"><i>▦</i><span>オリパ一覧</span></a>
+    <a href="index.html#oripa-list" class="on" data-nav="list"><i class="nav-pack-icon" aria-hidden="true"></i><span>オリパ一覧</span></a>
     <a href="index.html#news" data-nav="news"><i>!</i><span>速報</span></a>
     <a href="index.html?sort=popular#oripa-list" data-nav="ranking"><i>♕</i><span>ランキング</span></a>
     <a href="mypage.html#history"><i>✓</i><span>当選履歴</span></a>
