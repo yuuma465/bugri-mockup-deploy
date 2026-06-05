@@ -1001,6 +1001,7 @@ img { display: block; max-width: 100%; }
   flex-direction: column; align-items: center; justify-content: center;
   gap: 14px; padding: 56px 20px 24px; box-sizing: border-box;
   overflow-y: auto;
+  -webkit-overflow-scrolling: touch;
 }
 .r10-result.on { display: flex; animation: cardIn .45s ease-out forwards; }
 .r10-head { font-size: 20px; font-weight: 900; letter-spacing: .1em;
@@ -1042,7 +1043,12 @@ img { display: block; max-width: 100%; }
   .draw-row { flex-direction: column; gap: 10px; }
   .draw-row .draw-btn, .draw-btn-10 { flex: none; width: 100%; }
   .r10-grid { grid-template-columns: repeat(2, 1fr); gap: 9px; max-width: 100%; }
-  .r10-result { padding: 50px 12px 20px; }
+  .r10-result {
+    justify-content: flex-start;
+    padding: 72px 12px 28px;
+    padding-top: calc(72px + env(safe-area-inset-top));
+    padding-bottom: calc(28px + env(safe-area-inset-bottom));
+  }
   .r10-cell.r10-best { transform: scale(1.04); }
   .r10-head { font-size: 17px; }
 }
