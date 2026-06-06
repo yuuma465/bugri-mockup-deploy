@@ -7,9 +7,10 @@
 const fmt = (n) => n.toLocaleString('ja-JP');
 const $ = (s, el = document) => el.querySelector(s);
 const $$ = (s, el = document) => [...el.querySelectorAll(s)];
+let ACTIVE_USER_POINTS = USER_POINTS;
 
 function catLabel(id) { return (CATEGORIES.find((c) => c.id === id) || {}).label || id; }
-function setHeaderPoints() { const el = $('#hdr-points'); if (el) el.textContent = fmt(USER_POINTS); }
+function setHeaderPoints() { const el = $('#hdr-points'); if (el) el.textContent = fmt(ACTIVE_USER_POINTS); }
 
 /* パックのサムネHTML（画像が無い場合は白ベースのプレースホルダ） */
 function thumbHtml(pack, big = false) {
@@ -27,17 +28,14 @@ function thumbHtml(pack, big = false) {
  * 一覧ページ
  * =============================================================== */
 let curCat = 'all';
-let curSort = new URLSearchParams(location.search).get('sort') || 'popular';
+let curSort = new URLSearchParams(location.search).get('sort') || 'expensive';
 const SORT_OPTIONS = [
-  { id: 'popular', label: 'おすすめ順' },
-  { id: 'expensive', label: 'ポイントが高い順' },
-  { id: 'cheap', label: 'ポイントが低い順' },
-  { id: 'new', label: '公開が新しい順' },
-  { id: 'old', label: '公開が古い順' },
-  { id: 'stockHigh', label: '残り割合が多い順' },
-  { id: 'stockLow', label: '残り割合が少ない順' },
+  { id: 'new', label: '新着順' },
+  { id: 'old', label: '古い順' },
+  { id: 'expensive', label: 'ポイント高い順' },
+  { id: 'cheap', label: 'ポイント低い順' },
 ];
-if (!SORT_OPTIONS.some((option) => option.id === curSort)) curSort = 'popular';
+if (!SORT_OPTIONS.some((option) => option.id === curSort)) curSort = 'expensive';
 
 function renderIndex() {
   setHeaderPoints();
@@ -309,7 +307,7 @@ function prizeListHtml(cards) {
       if (!groupCards.length) return '';
       return `<section class="prize-block prize-${group.tone}">
         <div class="prize-label"><b>${group.prize}</b><span>賞</span></div>
-        <div class="prize-cards">${groupCards.map(prizeCardHtml).join('')}</div>
+        <div class="prize-cards ${groupCards.length === 1 ? 'is-single' : ''}">${groupCards.map(prizeCardHtml).join('')}</div>
       </section>`;
     }).join('')}
   </div>`;
@@ -373,6 +371,7 @@ function wireGachaControls() {
   $('#g-close2').addEventListener('click', closeGacha);
   canvas = $('#gacha-canvas');
   ctx = canvas.getContext('2d');
+  wireDrawResultControls();
 }
 
 function fitCanvas() {
@@ -399,6 +398,345 @@ function resetStage() {
 let CURRENT_CARD = null;
 let CURRENT_CARDS = null;
 let gachaMode = 'single';     // 'single' | 'multi'
+let resultItems = [];
+let resultSelectedIds = new Set();
+let resultViewMode = 'list';
+let resultSort = 'expensive';
+let resultRevealTimer = 0;
+
+function prizeMeta(card) {
+  const group = PRIZE_GROUPS.find((item) => item.rarity === card.rarity) || PRIZE_GROUPS[PRIZE_GROUPS.length - 1];
+  const rarity = RARITY[card.rarity] || RARITY.N;
+  return { prize: group.prize, tone: group.tone, cls: rarity.cls };
+}
+
+function cardTradeValue(card) {
+  return Math.max(1, Number(card.value) || 1);
+}
+
+function resultItemFromCard(card, index) {
+  return {
+    ...card,
+    resultId: `result-${Date.now()}-${index}-${Math.random().toString(36).slice(2, 8)}`,
+    drawnOrder: index,
+    expires: 'あと3日',
+  };
+}
+
+function cleanResultCard(item) {
+  const { resultId, drawnOrder, expires, ...card } = item;
+  return card;
+}
+
+function cardArtHtml(card, size = '') {
+  const meta = prizeMeta(card);
+  return `<div class="draw-card-art draw-card-art-${meta.tone} ${size ? `draw-card-art-${size}` : ''}">
+    <div class="draw-card-art-title"><span></span>${card.name}</div>
+    <div class="draw-card-art-stage">
+      <div class="draw-card-art-card">BUGRI</div>
+      <div class="draw-card-art-rays"></div>
+      <div class="draw-card-art-pt">${fmt(cardTradeValue(card))}PT</div>
+    </div>
+    <div class="draw-card-art-copy">
+      発送対象は、表示PT相当のカードです。<br>
+      相場変動により内容が変わる場合がありますのでご了承ください。
+    </div>
+    <div class="draw-card-art-logo">BUGRI</div>
+  </div>`;
+}
+
+function sortedResultItems() {
+  const by = {
+    new: (a, b) => a.drawnOrder - b.drawnOrder,
+    old: (a, b) => b.drawnOrder - a.drawnOrder,
+    expensive: (a, b) => cardTradeValue(b) - cardTradeValue(a),
+    cheap: (a, b) => cardTradeValue(a) - cardTradeValue(b),
+  }[resultSort];
+  return [...resultItems].sort(by);
+}
+
+function resultItemHtml(item) {
+  const meta = prizeMeta(item);
+  const selected = resultSelectedIds.has(item.resultId);
+  return `<article class="draw-result-item ${selected ? 'is-selected' : ''}">
+    <button class="draw-card-open" type="button" data-id="${item.resultId}" aria-label="${item.name}を拡大表示">
+      ${cardArtHtml(item)}
+    </button>
+    <div class="draw-result-info">
+      <div class="draw-result-top">
+        <span class="draw-prize-pill draw-prize-${meta.tone}">${meta.prize}賞</span>
+        <button class="draw-select-btn ${selected ? 'is-selected' : ''}" type="button" data-id="${item.resultId}">
+          <span>${selected ? '選択中' : '選択'}</span><i>✓</i>
+        </button>
+      </div>
+      <h3>${item.name}</h3>
+      <div class="draw-result-value">${fmt(cardTradeValue(item))}PT</div>
+      <div class="draw-result-note">-</div>
+      <div class="draw-result-expire">◷ ${item.expires}</div>
+      <div class="draw-result-brand">BUGRI</div>
+      <div class="draw-result-point-bar"><span class="coin-icon">⚡</span><b>${fmt(cardTradeValue(item))}</b></div>
+    </div>
+  </article>`;
+}
+
+function renderDrawResultControls() {
+  const viewButton = $('#draw-view-toggle');
+  const sortLabel = $('#draw-sort-label');
+  const sortMenu = $('#draw-sort-menu');
+  if (!viewButton || !sortLabel || !sortMenu) return;
+  const isList = resultViewMode === 'list';
+  viewButton.innerHTML = `<span class="draw-view-icon ${isList ? 'is-list' : 'is-grid'}"></span><span>${isList ? 'リスト表示' : 'グリッド表示'}</span>`;
+  sortLabel.textContent = (SORT_OPTIONS.find((option) => option.id === resultSort) || SORT_OPTIONS[0]).label;
+  $$('.draw-sort-option', sortMenu).forEach((button) => {
+    const active = button.dataset.sort === resultSort;
+    button.classList.toggle('on', active);
+    button.setAttribute('aria-checked', String(active));
+  });
+}
+
+function renderDrawActionSheet() {
+  const total = resultItems
+    .filter((item) => resultSelectedIds.has(item.resultId))
+    .reduce((sum, item) => sum + cardTradeValue(item), 0);
+  const totalEl = $('#draw-selected-total');
+  const exchangeBtn = $('#draw-exchange-btn');
+  const shipBtn = $('#draw-ship-btn');
+  const resetBtn = $('#draw-select-reset');
+  if (totalEl) totalEl.textContent = fmt(total);
+  [exchangeBtn, shipBtn, resetBtn].forEach((button) => {
+    if (button) button.disabled = resultSelectedIds.size === 0;
+  });
+}
+
+function renderDrawResultList() {
+  const root = $('#draw-result-list');
+  if (!root) return;
+  root.classList.toggle('is-grid', resultViewMode === 'grid');
+  root.innerHTML = sortedResultItems().map(resultItemHtml).join('');
+  $$('.draw-card-open', root).forEach((button) => {
+    button.addEventListener('click', () => openDrawCardModal(button.dataset.id));
+  });
+  $$('.draw-select-btn', root).forEach((button) => {
+    button.addEventListener('click', () => {
+      const id = button.dataset.id;
+      if (resultSelectedIds.has(id)) resultSelectedIds.delete(id);
+      else resultSelectedIds.add(id);
+      renderDrawResultList();
+      renderDrawActionSheet();
+    });
+  });
+  renderDrawActionSheet();
+}
+
+function openDrawCardModal(id) {
+  const item = resultItems.find((card) => card.resultId === id);
+  const modal = $('#draw-card-modal');
+  const body = $('#draw-card-modal-body');
+  if (!item || !modal || !body) return;
+  body.innerHTML = cardArtHtml(item, 'large');
+  modal.classList.add('on');
+  modal.setAttribute('aria-hidden', 'false');
+}
+
+function closeDrawCardModal() {
+  const modal = $('#draw-card-modal');
+  if (!modal) return;
+  modal.classList.remove('on');
+  modal.setAttribute('aria-hidden', 'true');
+}
+
+function renderExchangePackList(selector) {
+  const root = $(selector);
+  if (!root) return;
+  const packs = ORIPA_PACKS.filter((pack) => pack.remainingStock > 0).slice(0, 4);
+  root.innerHTML = packs.map((pack) => {
+    const pct = Math.round((pack.remainingStock / pack.totalStock) * 100);
+    return `<article class="exchange-pack-card">
+      <a href="detail.html?id=${pack.id}" class="exchange-pack-link">
+        <div class="exchange-pack-visual theme-${pack.theme}">
+          <span>高還元</span>
+          <strong>${pack.name}</strong>
+          <small>もう一度ガチャる？</small>
+        </div>
+        <div class="exchange-pack-body">
+          <h3>${pack.name}</h3>
+          <div class="exchange-pack-price"><span class="coin-icon">⚡</span>${fmt(pack.price)}<small>/1回</small></div>
+          <div class="exchange-pack-stock">残り ${fmt(pack.remainingStock)}/${fmt(pack.totalStock)}</div>
+          <div class="gauge"><i style="width:${pct}%"></i></div>
+        </div>
+      </a>
+      <div class="exchange-pack-actions">
+        <a href="detail.html?id=${pack.id}">1回ガチャ</a>
+        <a href="detail.html?id=${pack.id}">10連ガチャ</a>
+      </div>
+    </article>`;
+  }).join('');
+}
+
+function selectedResultItems() {
+  return resultItems.filter((item) => resultSelectedIds.has(item.resultId));
+}
+
+function showDrawResultPage(cards) {
+  clearTimeout(resultRevealTimer);
+  if (cards) {
+    resultItems = cards.map(resultItemFromCard);
+    resultSelectedIds = new Set();
+    resultViewMode = 'list';
+    resultSort = 'expensive';
+    const notice = $('.draw-notice');
+    if (notice) notice.classList.remove('is-hidden');
+  }
+  const ov = $('#gacha-ov');
+  const page = $('#draw-result-page');
+  if (!ov || !page) return;
+  spawning = false;
+  stopLoop();
+  ov.classList.add('show', 'mode-result');
+  ov.classList.remove('mode-exchange', 'mode-ship');
+  page.classList.add('on');
+  $('#exchange-page')?.classList.remove('on');
+  $('#ship-page')?.classList.remove('on');
+  renderDrawResultControls();
+  renderDrawResultList();
+}
+
+function queueDrawResultPage(cards, immediate = false) {
+  clearTimeout(resultRevealTimer);
+  const snapshot = cards.map((card) => ({ ...card }));
+  if (immediate) {
+    showDrawResultPage(snapshot);
+    return;
+  }
+  resultRevealTimer = setTimeout(() => showDrawResultPage(snapshot), 780);
+}
+
+function replayResultAnimation() {
+  if (!resultItems.length) return;
+  const ov = $('#gacha-ov');
+  if (!ov) return;
+  const snapshot = resultItems.map(cleanResultCard);
+  $('#draw-result-page')?.classList.remove('on');
+  $('#exchange-page')?.classList.remove('on');
+  $('#ship-page')?.classList.remove('on');
+  ov.classList.remove('mode-result', 'mode-exchange', 'mode-ship');
+  fitCanvas();
+  resetStage();
+  startLoop();
+  const token = ++gachaToken;
+  if (snapshot.length > 1) {
+    gachaMode = 'multi';
+    CURRENT_CARDS = snapshot;
+    $('#gcard-wrap').style.display = 'none';
+    $('#charge').classList.add('on', 'boost');
+    spawning = 'converge';
+    setTimeout(() => {
+      if (token !== gachaToken) return;
+      spawning = false;
+      $('#flash').className = 'flash fire';
+      $('#charge').classList.remove('on', 'boost');
+      setTimeout(() => { if (token === gachaToken) reveal10(token); }, 300);
+    }, 1100);
+    return;
+  }
+  gachaMode = 'single';
+  CURRENT_CARD = snapshot[0];
+  $('#gcard-wrap').style.display = '';
+  $('#charge').classList.add('on');
+  spawning = 'converge';
+  setTimeout(() => {
+    if (token !== gachaToken) return;
+    spawning = false;
+    $('#flash').className = 'flash fire';
+    $('#charge').classList.remove('on');
+    setTimeout(() => { if (token === gachaToken) reveal(token); }, 260);
+  }, 1000);
+}
+
+function showExchangeComplete() {
+  const selected = selectedResultItems();
+  if (!selected.length) return;
+  const total = selected.reduce((sum, item) => sum + cardTradeValue(item), 0);
+  const before = ACTIVE_USER_POINTS;
+  const after = before + total;
+  ACTIVE_USER_POINTS = after;
+  setHeaderPoints();
+  $('#draw-result-page')?.classList.remove('on');
+  $('#ship-page')?.classList.remove('on');
+  $('#gacha-ov')?.classList.add('show', 'mode-exchange');
+  $('#gacha-ov')?.classList.remove('mode-result', 'mode-ship');
+  $('#exchange-page')?.classList.add('on');
+  $('#exchange-before').textContent = fmt(before);
+  $('#exchange-after').textContent = fmt(after);
+  $('#exchange-summary').textContent = `合計${selected.length}点交換しました。他商品は「獲得した商品一覧」でご確認ください。`;
+  renderExchangePackList('#exchange-pack-list');
+}
+
+function showShipRequestPage() {
+  const selected = selectedResultItems();
+  if (!selected.length) return;
+  $('#draw-result-page')?.classList.remove('on');
+  $('#exchange-page')?.classList.remove('on');
+  $('#gacha-ov')?.classList.add('show', 'mode-ship');
+  $('#gacha-ov')?.classList.remove('mode-result', 'mode-exchange');
+  $('#ship-page')?.classList.add('on');
+  $('#ship-count').textContent = fmt(selected.length);
+  renderExchangePackList('#ship-pack-list');
+}
+
+function wireDrawResultControls() {
+  const page = $('#draw-result-page');
+  if (!page || page.dataset.wired === 'true') return;
+  page.dataset.wired = 'true';
+  const sortRoot = $('#draw-result-sort');
+  const sortTrigger = $('#draw-sort-trigger');
+  const sortMenu = $('#draw-sort-menu');
+  sortMenu.innerHTML = SORT_OPTIONS.map((option) =>
+    `<button class="draw-sort-option" type="button" role="menuitemradio" data-sort="${option.id}" aria-checked="false">
+      <span class="draw-sort-check">✓</span><span>${option.label}</span>
+    </button>`
+  ).join('');
+  const setSortOpen = (open) => {
+    sortRoot.classList.toggle('is-open', open);
+    sortTrigger.setAttribute('aria-expanded', String(open));
+  };
+  sortTrigger.addEventListener('click', () => setSortOpen(!sortRoot.classList.contains('is-open')));
+  $$('.draw-sort-option', sortMenu).forEach((button) => {
+    button.addEventListener('click', () => {
+      resultSort = button.dataset.sort;
+      setSortOpen(false);
+      renderDrawResultControls();
+      renderDrawResultList();
+    });
+  });
+  document.addEventListener('click', (event) => {
+    if (!sortRoot.contains(event.target)) setSortOpen(false);
+  });
+  $('#draw-view-toggle').addEventListener('click', () => {
+    resultViewMode = resultViewMode === 'list' ? 'grid' : 'list';
+    renderDrawResultControls();
+    renderDrawResultList();
+  });
+  $('#draw-select-all').addEventListener('click', () => {
+    resultSelectedIds = new Set(resultItems.map((item) => item.resultId));
+    renderDrawResultList();
+  });
+  $('#draw-select-reset').addEventListener('click', () => {
+    resultSelectedIds.clear();
+    renderDrawResultList();
+  });
+  $('#draw-exchange-btn').addEventListener('click', showExchangeComplete);
+  $('#draw-ship-btn').addEventListener('click', showShipRequestPage);
+  $('#draw-result-replay').addEventListener('click', replayResultAnimation);
+  $('#draw-result-close').addEventListener('click', closeGacha);
+  $('#draw-notice-close').addEventListener('click', () => $('.draw-notice')?.classList.add('is-hidden'));
+  $('#draw-card-modal-close').addEventListener('click', closeDrawCardModal);
+  $('#draw-card-modal').addEventListener('click', (event) => {
+    if (event.target.id === 'draw-card-modal') closeDrawCardModal();
+  });
+  $('#exchange-close').addEventListener('click', closeGacha);
+  $('#ship-close').addEventListener('click', closeGacha);
+}
 
 function startGacha() {
   gachaMode = 'single';
@@ -455,10 +793,11 @@ function reveal(token) {
   }, 480);
 }
 
-function showResult(card) {
+function showResult(card, immediate = false) {
   // カード面に レア度・名前・価値 を集約済み。ここは持ち上げて操作パネルを出すだけ。
   $('#gcard-wrap').classList.add('lift');
   $('#gresult').classList.add('on');
+  queueDrawResultPage([card], immediate);
 }
 
 /* ===================================================================
@@ -529,6 +868,7 @@ function reveal10(token) {
   // 最高レア演出：BEST のレア度で強めの紙吹雪（SSRなら最大量）
   burst(best.rarity);
   if (best.rarity === 'SSR') setTimeout(() => burst('SSR'), 180);
+  queueDrawResultPage(cards);
 }
 
 function renderR10Grid(cards, bi) {
@@ -568,7 +908,7 @@ function skipGacha() {
     <span class="gfront-val">${fmt(card.value)} pt</span>`;
   $('#gcard-wrap').classList.add('on');
   $('#gcard').classList.add('flip');
-  showResult(card);
+  showResult(card, true);
 }
 
 /* 10連スキップ：結果グリッドへ一気に飛ばす */
@@ -584,15 +924,21 @@ function skipGacha10() {
   $('#aura').className = `aura on ${cls}`;
   renderR10Grid(cards, bi);
   $('#r10-result').classList.add('on');
+  queueDrawResultPage(cards, true);
 }
 
 function closeGacha() {
   gachaToken++;
+  clearTimeout(resultRevealTimer);
   spawning = false;
   stopLoop();
-  $('#gacha-ov').classList.remove('show');
+  $('#gacha-ov').classList.remove('show', 'mode-result', 'mode-exchange', 'mode-ship');
   resetStage();
   $('#gcard-wrap').style.display = '';
+  $('#draw-result-page')?.classList.remove('on');
+  $('#exchange-page')?.classList.remove('on');
+  $('#ship-page')?.classList.remove('on');
+  closeDrawCardModal();
   CURRENT_CARD = null;
   CURRENT_CARDS = null;
 }

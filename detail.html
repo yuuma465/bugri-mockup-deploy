@@ -105,6 +105,103 @@
       </div>
     </div>
 
+    <!-- ===== ガチャ後：獲得カード選択画面 ===== -->
+    <section class="draw-result-page" id="draw-result-page" aria-label="獲得カード選択">
+      <header class="draw-result-header">
+        <img src="assets/img/bugri-wordmark.png" alt="BUGRI バグリ">
+        <button type="button" id="draw-result-close">スキップ</button>
+      </header>
+
+      <main class="draw-result-main">
+        <button class="draw-replay" id="draw-result-replay" type="button">
+          <span class="draw-replay-icon">▶</span>
+          <span>ガチャ演出をもう一度見る</span>
+        </button>
+
+        <div class="draw-notice">
+          <span class="draw-notice-icon">i</span>
+          <p>並び替えの設定が保存されるようになりました。<br>次回以降も同じ順番で表示されます。</p>
+          <button type="button" id="draw-notice-close" aria-label="お知らせを閉じる">×</button>
+        </div>
+
+        <div class="draw-result-controls">
+          <button class="draw-view-toggle" id="draw-view-toggle" type="button"></button>
+          <div class="draw-sort-select" id="draw-result-sort">
+            <button class="draw-sort-trigger" id="draw-sort-trigger" type="button" aria-haspopup="true" aria-expanded="false">
+              <span class="draw-sort-icon">↕</span>
+              <span id="draw-sort-label">ポイント高い順</span>
+            </button>
+            <div class="draw-sort-menu" id="draw-sort-menu" role="menu"></div>
+          </div>
+        </div>
+
+        <section class="draw-result-list" id="draw-result-list"></section>
+        <div class="draw-watermark">
+          <img src="assets/img/bugri-logo.png" alt="">
+          <span>BUGRI</span>
+        </div>
+      </main>
+
+      <footer class="draw-action-sheet">
+        <div class="draw-action-head">
+          <div class="draw-selected-total"><span class="coin-icon">⚡</span><b id="draw-selected-total">0</b><span>PT</span></div>
+          <button type="button" id="draw-select-all">すべて選択</button>
+          <button type="button" id="draw-select-reset">リセット</button>
+        </div>
+        <div class="draw-action-buttons">
+          <button class="draw-exchange-btn" id="draw-exchange-btn" type="button" disabled>ポイントに変える</button>
+          <button class="draw-ship-btn" id="draw-ship-btn" type="button" disabled>発送依頼</button>
+        </div>
+        <p id="draw-action-note">選択されなかった商品は「獲得した商品一覧」に移動されます</p>
+        <img class="draw-sheet-logo" src="assets/img/bugri-wordmark.png" alt="">
+      </footer>
+    </section>
+
+    <div class="draw-card-modal" id="draw-card-modal" aria-hidden="true">
+      <button class="draw-card-modal-close" id="draw-card-modal-close" type="button" aria-label="閉じる">×</button>
+      <div class="draw-card-modal-body" id="draw-card-modal-body"></div>
+    </div>
+
+    <section class="exchange-page" id="exchange-page" aria-label="ポイント交換完了">
+      <header class="exchange-header">
+        <img src="assets/img/bugri-wordmark.png" alt="BUGRI バグリ">
+        <button type="button" id="exchange-close">閉じる</button>
+      </header>
+      <main class="exchange-main">
+        <h1><span></span>ポイントに交換しました！<span></span></h1>
+        <div class="exchange-balance">
+          <span class="coin-icon">⚡</span><b id="exchange-before">0</b>
+          <i>›</i>
+          <span class="coin-icon">⚡</span><b id="exchange-after">0</b>
+        </div>
+        <p id="exchange-summary">合計0点交換しました。他商品は「獲得した商品一覧」でご確認ください。</p>
+
+        <section class="exchange-pack-section">
+          <h2>ガチャ一覧</h2>
+          <div class="exchange-pack-list" id="exchange-pack-list"></div>
+        </section>
+      </main>
+    </section>
+
+    <section class="exchange-page ship-page" id="ship-page" aria-label="発送依頼">
+      <header class="exchange-header">
+        <img src="assets/img/bugri-wordmark.png" alt="BUGRI バグリ">
+        <button type="button" id="ship-close">閉じる</button>
+      </header>
+      <main class="exchange-main">
+        <h1><span></span>発送依頼を受け付けました！<span></span></h1>
+        <div class="ship-summary-card">
+          <b id="ship-count">0</b><span>点の商品を発送依頼に追加しました</span>
+        </div>
+        <p>発送先入力や本人確認は本番連携時に接続する想定のモック表示です。</p>
+
+        <section class="exchange-pack-section">
+          <h2>ガチャ一覧</h2>
+          <div class="exchange-pack-list" id="ship-pack-list"></div>
+        </section>
+      </main>
+    </section>
+
     <!-- 収束フラッシュ -->
     <div class="flash" id="flash"></div>
   </div>
