@@ -458,16 +458,16 @@ function sortedResultItems() {
 function resultItemHtml(item) {
   const meta = prizeMeta(item);
   const selected = resultSelectedIds.has(item.resultId);
-  return `<article class="draw-result-item ${selected ? 'is-selected' : ''}">
-    <button class="draw-card-open" type="button" data-id="${item.resultId}" aria-label="${item.name}を拡大表示">
+  return `<article class="draw-result-item ${selected ? 'is-selected' : ''}" data-id="${item.resultId}" role="button" tabindex="0" aria-pressed="${selected}">
+    <div class="draw-card-open" aria-hidden="true">
       ${cardArtHtml(item)}
-    </button>
+    </div>
     <div class="draw-result-info">
       <div class="draw-result-top">
         <span class="draw-prize-pill draw-prize-${meta.tone}">${meta.prize}賞</span>
-        <button class="draw-select-btn ${selected ? 'is-selected' : ''}" type="button" data-id="${item.resultId}">
+        <span class="draw-select-btn ${selected ? 'is-selected' : ''}">
           <span>${selected ? '選択中' : '選択'}</span><i>✓</i>
-        </button>
+        </span>
       </div>
       <h3>${item.name}</h3>
       <div class="draw-result-value">${fmt(cardTradeValue(item))}PT</div>
@@ -477,6 +477,13 @@ function resultItemHtml(item) {
       <div class="draw-result-point-bar"><span class="coin-icon">⚡</span><b>${fmt(cardTradeValue(item))}</b></div>
     </div>
   </article>`;
+}
+
+function toggleResultSelection(id) {
+  if (resultSelectedIds.has(id)) resultSelectedIds.delete(id);
+  else resultSelectedIds.add(id);
+  renderDrawResultList();
+  renderDrawActionSheet();
 }
 
 function renderDrawResultControls() {
@@ -513,16 +520,12 @@ function renderDrawResultList() {
   if (!root) return;
   root.classList.toggle('is-grid', resultViewMode === 'grid');
   root.innerHTML = sortedResultItems().map(resultItemHtml).join('');
-  $$('.draw-card-open', root).forEach((button) => {
-    button.addEventListener('click', () => openDrawCardModal(button.dataset.id));
-  });
-  $$('.draw-select-btn', root).forEach((button) => {
-    button.addEventListener('click', () => {
-      const id = button.dataset.id;
-      if (resultSelectedIds.has(id)) resultSelectedIds.delete(id);
-      else resultSelectedIds.add(id);
-      renderDrawResultList();
-      renderDrawActionSheet();
+  $$('.draw-result-item', root).forEach((item) => {
+    item.addEventListener('click', () => toggleResultSelection(item.dataset.id));
+    item.addEventListener('keydown', (event) => {
+      if (event.key !== 'Enter' && event.key !== ' ') return;
+      event.preventDefault();
+      toggleResultSelection(item.dataset.id);
     });
   });
   renderDrawActionSheet();

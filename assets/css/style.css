@@ -1680,16 +1680,22 @@ img { display: block; max-width: 100%; }
   background: #ffffff;
   box-shadow: 0 4px 16px rgba(20,26,40,.11);
   position: relative;
+  cursor: pointer;
+  transition: box-shadow .15s ease, transform .15s ease;
 }
 .draw-result-item.is-selected {
   box-shadow: 0 0 0 2px rgba(236,47,89,.24), 0 8px 22px rgba(20,26,40,.13);
 }
+.draw-result-item:active {
+  transform: scale(.985);
+}
+.draw-result-item:focus-visible {
+  outline: 3px solid rgba(236,47,89,.34);
+  outline-offset: 3px;
+}
 .draw-card-open {
   width: 100%;
-  border: 0;
-  padding: 0;
-  background: transparent;
-  cursor: zoom-in;
+  cursor: inherit;
 }
 .draw-card-art {
   width: 100%;
@@ -1906,7 +1912,7 @@ img { display: block; max-width: 100%; }
   background: #f1f2f4;
   font-size: 12px;
   font-weight: 900;
-  cursor: pointer;
+  pointer-events: none;
 }
 .draw-select-btn i {
   width: 22px;
